@@ -278,7 +278,7 @@ body.locked header,body.locked main{filter:blur(8px);pointer-events:none;user-se
 
     <div class="lock-msg" id="lockMsg"></div>
     <div class="lock-help">
-      This lock is stored only in this browser. Your OneDrive workbook remains protected separately by browser file permission.
+      This lock is stored only in this browser. Your Renoweet financial database remains protected in your Google Drive.
     </div>
   </div>
 </div>
@@ -291,7 +291,7 @@ body.locked header,body.locked main{filter:blur(8px);pointer-events:none;user-se
     </div>
     <button class="green" id="newInvoiceBtn">+ New invoice</button>
     <button class="secondary" id="newExpenseBtn">+ Add expense</button>
-    <button class="primary" id="connectBtn">Connect OneDrive workbook</button>
+    <button class="primary" id="connectBtn">Connect Google Drive</button>
     <button class="secondary" id="syncOSBtn">Sync Renoweet OS</button>
     <button class="secondary" id="changeOSBtn">Change OS file</button>
     <button class="secondary" id="saveNowBtn" disabled>Save now</button>
@@ -1887,33 +1887,15 @@ $("changeOSBtn").onclick=()=>syncRenoweetOS(true);
 $("saveNowBtn").onclick=()=>saveWorkbook(true);
 
 async function startup(){
-  await restoreBrowserCache();
-  if(!("showOpenFilePicker" in window)){
-    if(!restoredLocalCache)$("status").textContent="Use Edge/Chrome to enable direct autosave";
-    return;
-  }
+  // Drive edition: never auto-open or reconnect legacy quarterly XLSX workbooks.
+  // The yearly Google Drive JSON is the only live source of truth.
+  // Keep proof-folder permission because receipt/proof storage is independent of the database.
   try{
-    const remembered=await getRememberedHandle();
-    const rememberedOS=await getRememberedHandle(OS_HANDLE_KEY);
     const rememberedProof=await getRememberedHandle(PROOF_FOLDER_KEY);
     if(rememberedProof && await verifyPermission(rememberedProof,false))proofFolderHandle=rememberedProof;
-    if(rememberedOS && await verifyPermission(rememberedOS,false)){
-      osFileHandle=rememberedOS;
-      $("osSyncStatus").innerHTML="<b>Renoweet OS sync:</b> database remembered • click Sync Renoweet OS.";
-    }
-    if(remembered && await verifyPermission(remembered,false)){
-      // When offline edits survived a refresh, reuse the remembered handle automatically when Android kept permission.
-      await loadFromHandle(remembered,false);
-    } else if(restoredLocalCache){
-      $("status").textContent=localCacheDirty?"Offline changes restored ✓ • continue working; reconnect XLSX when ready":"Local bookkeeping restored ✓ • reconnect XLSX when ready";
-    } else {
-      $("status").textContent="Choose your OneDrive XLSX to begin"+(RENOWEET_ANDROID?" • keep Renoweet folder available offline in OneDrive":"");
-    }
-  }catch(e){
-    console.error(e);
-    if(restoredLocalCache)$("status").textContent="Offline bookkeeping restored ✓ • reconnect XLSX when ready";
-    else $("status").textContent="Choose your OneDrive XLSX to begin";
-  }
+  }catch(e){ console.warn("Could not restore proof folder permission",e); }
+  $("status").textContent="Drive v3.1 ready • connect Google Drive to verify the yearly database";
+  $("osSyncStatus").innerHTML="<b>Renoweet OS:</b> invoices come from the same yearly JSON database.";
 }
 
 $("setupPinBtn").onclick=setupPin;
@@ -1956,6 +1938,6 @@ document.querySelectorAll(".tab").forEach(btn=>{
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="./renoweet-drive-core-v3.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="./renoweet-bookkeeping-drive-adapter-v3.0.js"></script>
+<script src="./renoweet-bookkeeping-drive-adapter-v3.1.js"></script>
 </body>
 </html>
