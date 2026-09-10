@@ -1,11 +1,11 @@
 {
-  "name": "Renoweet Hub",
-  "short_name": "Renoweet",
-  "description": "Renoweet OS, Bookkeeping and Board Dashboard in one installable hub.",
+  "name": "Renoweet Focus Hub",
+  "short_name": "Renoweet Hub",
+  "description": "Renoweet apps, focus, goals, metrics, insights and expense optimizer.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#08101f",
+  "background_color": "#edf3fb",
   "theme_color": "#0b1324",
   "icons": [
     {"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"},
