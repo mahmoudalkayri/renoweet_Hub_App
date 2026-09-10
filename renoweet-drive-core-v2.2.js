@@ -7,8 +7,8 @@
 (function(){
 'use strict';
 const Core={};
-const SCHEMA_VERSION=2, APP_VERSION='drive-v2.1';
-const DEFAULT_GOOGLE_CLIENT_ID='819845217406-lhhnh22g9s8vr7jtehcchb2j910hq34v.apps.googleusercontent.com';
+const SCHEMA_VERSION=2, APP_VERSION='drive-v2.2';
+const DEFAULT_GOOGLE_CLIENT_ID='819845217406-569349vod25m15sb2omm03do2h1ll976.apps.googleusercontent.com';
 const LS={clientId:'renoweet_google_client_id_v1',token:'renoweet_google_access_token_v1',tokenAt:'renoweet_google_token_at_v1',folderId:'renoweet_drive_folder_id_v1',activeId:'renoweet_drive_active_id_v1',year:'renoweet_drive_year_v1',deviceId:'renoweet_device_id_v2',lastRecovery:'renoweet_last_recovery_v2_'};
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
 const ROOT_FOLDER='Renoweet Data', ACTIVE_FOLDER='Active', ARCHIVE_FOLDER='Archives', RECOVERY_FOLDER='Recovery', MANIFEST_NAME='Renoweet-manifest.json';

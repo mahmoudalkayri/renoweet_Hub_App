@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1324">
+  <meta name="description" content="Renoweet Hub — launch Renoweet OS, Bookkeeping and BOD from one installable dashboard.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="hub-styles.css">
+  <title>Renoweet Hub</title>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row">
+      <div class="brand-mark">R</div>
+      <div class="brand-copy">
+        <h1>Renoweet Hub</h1>
+        <p>Operations · Bookkeeping · Business overview</p>
+      </div>
+      <div class="status-stack">
+        <span id="onlineBadge" class="status-badge">Checking…</span>
+        <button id="installBtn" class="install-btn" type="button">Install app</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-card">
+      <div>
+        <div class="kicker">RENOWEET CONTROL CENTER</div>
+        <h2>One home screen for the whole business.</h2>
+        <p>Open the right workspace without remembering separate URLs. Your live business data remains in your Google Drive.</p>
+      </div>
+      <div class="year-pill">Drive v2.2 · 2026</div>
+    </section>
+
+    <section class="app-grid" aria-label="Renoweet applications">
+      <a class="app-card primary" href="Renoweet-OS-Drive-v2.2.html">
+        <div class="app-icon">OS</div>
+        <div class="app-copy">
+          <span class="app-kicker">OPERATIONS</span>
+          <h2>Renoweet OS</h2>
+          <p>Projects, clients, estimates, planning, purchasing, execution and handover.</p>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+
+      <a class="app-card" href="Renoweet-Bookkeeping-Drive-v2.2.html">
+        <div class="app-icon">€</div>
+        <div class="app-copy">
+          <span class="app-kicker">FINANCE</span>
+          <h2>Bookkeeping</h2>
+          <p>Invoices, expenses, fuel, auto, quarterly control and financial records.</p>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+
+      <a class="app-card" href="Renoweet-BOD-Drive-v2.2.html">
+        <div class="app-icon">B</div>
+        <div class="app-copy">
+          <span class="app-kicker">MANAGEMENT</span>
+          <h2>Board Dashboard</h2>
+          <p>Read-only business overview using the current year and historical archives.</p>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+    </section>
+
+    <section class="info-grid">
+      <div class="info-card">
+        <span class="app-kicker">DATA OWNERSHIP</span>
+        <h3>Google Drive stays the database.</h3>
+        <p>The hub only launches the apps. It does not move your business records into GitHub.</p>
+      </div>
+      <div class="info-card">
+        <span class="app-kicker">INSTALL</span>
+        <h3>Use it like an app.</h3>
+        <p>Install this hub on desktop or phone, then launch OS, Bookkeeping or BOD from one icon.</p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="installHelp">
+    <div class="dialog-head">
+      <h2>Install Renoweet Hub</h2>
+      <button id="closeInstallHelp" class="icon-btn" type="button" aria-label="Close">×</button>
+    </div>
+    <p id="installHelpText"></p>
+  </dialog>
+
+  <footer>
+    <span>Renoweet Hub</span>
+    <span id="footerStatus">Ready</span>
+  </footer>
+
+  <script src="hub.js"></script>
+</body>
+</html>

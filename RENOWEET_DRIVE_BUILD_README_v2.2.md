@@ -1,4 +1,4 @@
-# Renoweet Drive Architecture — Build v2.1
+# Renoweet Drive Architecture — Build v2.2
 
 This is the hardened storage build for Renoweet OS, Bookkeeping and BOD. It keeps the existing application interfaces as much as possible while changing the live database from continuously rewritten XLSX files to one validated JSON database per year in the owner's Google Drive.
 
@@ -51,9 +51,9 @@ BOD is read-only. It validates and loads the active yearly JSON, reads the manif
 4. Create an OAuth 2.0 **Web application** client ID.
 5. Add the HTTPS origin where the Renoweet pages are hosted under Authorized JavaScript origins.
 6. Put all files from this package together on that origin.
-7. Open OS or Bookkeeping and connect. This v2.1 package already contains the Renoweet OAuth Web Client ID, so you should not need to paste it manually on each device.
+7. Open OS or Bookkeeping and connect. This v2.2 package already contains the Renoweet OAuth Web Client ID, so you should not need to paste it manually on each device.
 
-The app uses `drive.file`; no Google client secret is embedded in the HTML. The OAuth Web Client ID is a public identifier and is preconfigured as `819845217406-lhhnh22g9s8vr7jtehcchb2j910hq34v.apps.googleusercontent.com`.
+The app uses `drive.file`; no Google client secret is embedded in the HTML. The OAuth Web Client ID is a public identifier and is preconfigured as `819845217406-569349vod25m15sb2omm03do2h1ll976.apps.googleusercontent.com`.
 
 ## Safe migration sequence
 
@@ -76,10 +76,10 @@ Older 2026 workbooks can have a completely different structure. They should be h
 
 ## Files
 
-- `Renoweet-OS-Drive-v2.1.html`
-- `Renoweet-Bookkeeping-Drive-v2.1.html`
-- `Renoweet-BOD-Drive-v2.1.html`
-- `renoweet-drive-core-v2.1.js`
+- `Renoweet-OS-Drive-v2.2.html`
+- `Renoweet-Bookkeeping-Drive-v2.2.html`
+- `Renoweet-BOD-Drive-v2.2.html`
+- `renoweet-drive-core-v2.2.js`
 - `renoweet-os-drive-adapter-v2.js`
 - `renoweet-bookkeeping-drive-adapter-v2.js`
 - `renoweet-bod-drive-adapter-v2.js`
@@ -90,6 +90,6 @@ Older 2026 workbooks can have a completely different structure. They should be h
 This build has been syntax-checked and its local integrity functions have been tested without a Google account. It has **not** been end-to-end tested against your real Google Drive/OAuth configuration. Keep the existing production system until the Google Drive test sequence above passes.
 
 
-## v2.1 change
+## v2.2 change
 
 The Renoweet Google OAuth Web Client ID is preconfigured in the shared Drive core and in the OS Google Calendar integration. Browser-local override remains possible through Drive settings if the OAuth client ever changes in the future.
