@@ -122,6 +122,25 @@ async function listArchives(){const tree=await ensureTree();return listFiles(`tr
 async function listRecovery(year=currentYear()){const tree=await ensureTree();return (await listFiles(`trashed=false and '${escQ(tree.recovery.id)}' in parents`)).filter(f=>new RegExp(`^Renoweet-${safeYear(year)}-r`).test(f.name)).sort((a,b)=>String(b.modifiedTime).localeCompare(String(a.modifiedTime)))}
 async function readDriveJsonById(id){return verifyCanonical(JSON.parse(await getText(id)))}
 async function downloadCompleteBackup(year=currentYear()){if(typeof JSZip==='undefined')throw new Error('ZIP library is not loaded. Open the page while online once, then try again.');const live=await loadYear(year,true),sealed=await sealCanonical(live.data),wb=await canonicalToWorkbook(sealed),xlsx=XLSX.write(wb,{bookType:'xlsx',type:'array'}),manifest=(await loadManifest(true)).data,zip=new JSZip();zip.file(`Renoweet-${year}.json`,JSON.stringify(sealed,null,2));zip.file(`Renoweet-${year}.xlsx`,xlsx);zip.file(MANIFEST_NAME,JSON.stringify(manifest,null,2));zip.file('README.txt',`Renoweet complete offline backup\nCreated: ${now()}\nYear: ${year}\nRevision: ${sealed.meta.revision}\nSHA-256: ${sealed.integrity.checksum}\n\nThe JSON file is the exact machine-restorable source. The XLSX file is a human-readable and reconstructable archive.`);const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE'});downloadBlob(blob,`Renoweet-Backup-${year}-${new Date().toISOString().slice(0,10)}.zip`)}
+
+async function listAvailableYears(){
+  const years=new Set([currentYear()]);
+  let activeYear=currentYear();
+  try{
+    const m=await loadManifest(false);
+    if(m?.data){
+      activeYear=Math.max(currentYear(),safeYear(m.data.activeYear||activeYear));
+      for(const y of Object.keys(m.data.years||{}))if(/^\d{4}$/.test(y))years.add(Number(y));
+    }
+  }catch(e){console.warn('Could not read manifest years',e)}
+  try{
+    const files=await listFiles("name contains 'Renoweet-' and trashed=false");
+    for(const f of files){const m=String(f.name||'').match(/^Renoweet-(\d{4})\.json$/);if(m)years.add(Number(m[1]))}
+  }catch(e){console.warn('Could not scan yearly Renoweet files',e)}
+  return {activeYear,years:[...years].filter(y=>Number.isInteger(y)&&y>=2000&&y<=2100).sort((a,b)=>b-a)};
+}
+async function loadExistingYear(year){return loadYear(year,false)}
+
 function configure(){const existing=clientId(),id=prompt('Google OAuth Web Client ID\n\nCreate this once in Google Cloud Console. It is not a secret and may be stored in this browser.',existing);if(id!==null)setClientId(id);return clientId()}function getCachedYear(year=currentYear()){return cacheGet('year:'+safeYear(year))}
-Object.assign(Core,{SCHEMA_VERSION,APP_VERSION,DEFAULT_GOOGLE_CLIENT_ID,DRIVE_SCOPE,blankCanonical,normalizeCanonical,verifyCanonical,sealCanonical,sha256Text,computeChecksum,countRecords,deviceId,clientId,setClientId,configure,authorize,ensureTree,loadYear,saveSection,markQuarterClosed,reopenQuarter,updatePeriodInfo,downloadJSON,downloadXLSX,canonicalToWorkbook,createArchiveOnDrive,createJsonArchiveOnDrive,createFinalArchives,downloadCompleteBackup,loadManifest,listArchives,listRecovery,readDriveJsonById,getBytes,getCachedYear,currentYear,activeName,clone,quarterFromDate});window.RenoweetDrive=Core;
+Object.assign(Core,{SCHEMA_VERSION,APP_VERSION,DEFAULT_GOOGLE_CLIENT_ID,DRIVE_SCOPE,blankCanonical,normalizeCanonical,verifyCanonical,sealCanonical,sha256Text,computeChecksum,countRecords,deviceId,clientId,setClientId,configure,authorize,ensureTree,loadYear,loadExistingYear,listAvailableYears,saveSection,markQuarterClosed,reopenQuarter,updatePeriodInfo,downloadJSON,downloadXLSX,canonicalToWorkbook,createArchiveOnDrive,createJsonArchiveOnDrive,createFinalArchives,downloadCompleteBackup,loadManifest,listArchives,listRecovery,readDriveJsonById,getBytes,getCachedYear,currentYear,activeName,clone,quarterFromDate});window.RenoweetDrive=Core;
 })();

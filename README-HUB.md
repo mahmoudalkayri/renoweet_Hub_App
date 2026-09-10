@@ -1,18 +1,12 @@
-# Renoweet Hub v2.3
+# Renoweet Focus Hub v3.0
 
-This package adds a root `index.html` dashboard so the GitHub Pages repository URL opens normally instead of returning 404.
+Main GitHub Pages entry: `index.html`.
 
-The dashboard links to:
-- Renoweet OS v2.2
-- Renoweet Bookkeeping v2.2
-- Renoweet BOD v2.2
+This package contains the Focus Hub, Renoweet OS, Bookkeeping and BOD. Google Drive remains the live owner-controlled storage layer.
 
-It is also a Progressive Web App (PWA): `manifest.webmanifest`, `service-worker.js`, icons and an Install button are included.
-
-## GitHub Pages
-Upload the **contents of this folder** to the root of the GitHub repository. Keep `index.html` in the repository root. Pages should be configured to deploy from `main` / `(root)`.
-
-The repository root URL will then open the Renoweet Hub automatically.
-
-## Important
-The hub does not store Renoweet business data. OS and Bookkeeping continue to use the existing Google Drive v2.2 storage layer. BOD remains read-only.
+## v3.0 year navigation
+- OS and Bookkeeping now include a Year selector.
+- The current calendar/active year is editable.
+- Previous `Renoweet-YYYY.json` files load read-only.
+- Historical mode blocks saves and financial period-changing actions.
+- The yearly JSON model remains one file per calendar year; XLSX is archive/export/recovery rather than the live database.
