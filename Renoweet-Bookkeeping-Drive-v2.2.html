@@ -350,6 +350,7 @@ body.locked header,body.locked main{filter:blur(8px);pointer-events:none;user-se
       <button class="tab" data-view="autoFuel">Auto & Fuel</button>
       <button class="tab" data-view="btwReport">BTW Report</button>
       <button class="tab" data-view="incomeTax">Income Tax</button>
+      <button class="tab" data-view="deleted">Deleted</button>
     </div>
     <div class="status" id="status">Loading database…</div>
   </div>
@@ -361,6 +362,7 @@ body.locked header,body.locked main{filter:blur(8px);pointer-events:none;user-se
   <section id="autoFuel" class="view" hidden></section>
   <section id="btwReport" class="view" hidden></section>
   <section id="incomeTax" class="view" hidden></section>
+  <section id="deleted" class="view" hidden></section>
   <div class="footer">Renoweet • Internal bookkeeping view • www.renoweet.nl</div>
 </main>
 
@@ -1231,6 +1233,7 @@ function render(){
   </div>`;
   renderBTWReport();
   renderIncomeTax();
+  $("deleted").innerHTML=deletedBookkeepingHTML();
 }
 function nextInvoiceNo(){
   const y=new Date().getFullYear();
@@ -1607,6 +1610,41 @@ $("deleteExpenseBtn").onclick=()=>{
   closeModal("expenseModal");
   alert(`The ${type.toLowerCase()} expense was moved to the Deleted sheet.`);
 };
+
+function deletedRecordQuarter(row){
+ const d=excelDate(row?.Date);if(!d)return null;return {year:d.getFullYear(),quarter:Math.floor(d.getMonth()/3)+1};
+}
+function deletedRecordClosed(row){
+ const q=deletedRecordQuarter(row);if(!q)return false;
+ try{return state?.periods?.[`${q.year}-Q${q.quarter}`]?.status==='closed'}catch(e){return false}
+}
+function originalDeletedRecord(row){try{const r=JSON.parse(String(row?.['Original JSON']||''));return r&&typeof r==='object'?r:null}catch(e){return null}}
+function deletedBookkeepingHTML(){
+ const rows=data.deleted||[];
+ if(!rows.length)return `<div class="card panel"><div class="empty">No deleted bookkeeping records.</div></div>`;
+ return `<div class="card panel"><div class="panel-head"><div><h2>Deleted records</h2><div class="chart-sub">Restore records when needed. Permanent deletion is allowed only while the record's BTW quarter is open.</div></div></div><div class="table-wrap"><table><thead><tr><th>Deleted</th><th>Type</th><th>Record</th><th>Date</th><th>Customer / Supplier</th><th>Gross</th><th>Period</th><th>Actions</th></tr></thead><tbody>${rows.map((r,i)=>{const q=deletedRecordQuarter(r),closed=deletedRecordClosed(r);return `<tr><td>${fmtDate(r['Deleted at'])}</td><td>${esc(r.Type||'')}</td><td><b>${esc(r['Record ID']||'')}</b><div class="chart-sub">${esc(r.Description||'')}</div></td><td>${fmtDate(r.Date)}</td><td>${esc(r['Customer / Supplier']||'')}</td><td class="money">${euro.format(n(r.Gross))}</td><td>${q?`Q${q.quarter} ${q.year}${closed?' • CLOSED':''}`:'—'}</td><td><div class="report-actions"><button class="secondary" onclick="restoreDeletedBookkeeping(${i})" ${closed?'disabled title="Reopen this BTW quarter before restoring"':''}>Restore</button><button class="danger" onclick="permanentlyDeleteBookkeeping(${i})" ${closed?'disabled title="Closed quarters cannot be permanently deleted"':''}>Delete permanently</button></div></td></tr>`}).join('')}</tbody></table></div></div>`;
+}
+function restoreDeletedBookkeeping(index){
+ const row=(data.deleted||[])[index];if(!row)return;
+ if(deletedRecordClosed(row)){alert('This record belongs to a CLOSED BTW quarter. Reopen that quarter before restoring it.');return}
+ const r=originalDeletedRecord(row);if(!r){alert('The original record could not be reconstructed from this Deleted entry.');return}
+ const type=String(row.Type||'').toLowerCase();let arr;
+ if(type==='invoice')arr=data.invoices;
+ else if(type.includes('fuel'))arr=data.fuel;
+ else if(type.includes('automobile'))arr=data.auto;
+ else arr=data.expenses;
+ if(type==='invoice'&&arr.some(x=>String(x['Invoice #']||'').trim()===String(r['Invoice #']||'').trim())){alert('That invoice number already exists. Renoweet will not create a duplicate.');return}
+ if(!confirm(`Restore ${row.Type||'record'} ${row['Record ID']||''}?\n\nIt will return to the bookkeeping calculations for its original date.`))return;
+ arr.push(r);data.deleted.splice(index,1);persist();alert('Bookkeeping record restored.');
+}
+function permanentlyDeleteBookkeeping(index){
+ const row=(data.deleted||[])[index];if(!row)return;
+ if(deletedRecordClosed(row)){alert('Permanent deletion is blocked because this record belongs to a CLOSED BTW quarter. Reopen the quarter first if a correction is genuinely required.');return}
+ const label=row['Record ID']||row.Description||'this record';
+ if(!confirm(`PERMANENTLY DELETE ${label}?\n\nThis removes the Deleted copy from the live bookkeeping database and cannot be undone from this screen. Drive recovery snapshots/backups may still contain an older copy.`))return;
+ const typed=prompt(`Type DELETE to permanently erase ${label}:`,'');if(typed!=='DELETE')return;
+ data.deleted.splice(index,1);persist();alert('Deleted bookkeeping record permanently erased.');
+}
 
 function aoaFromData(){
   const invHeaders=["Invoice #","Date","Customer","Address","Work description","Contact","Phone","Email","Gross incl. VAT","Parking","Other costs","VAT","VAT rate","Net revenue","Status","Due date","Paid date","Days overdue","Notes","Source database"];
