@@ -65,3 +65,21 @@ connectWorkbook=connectDrive;saveWorkbook=saveDrive;scheduleSave=scheduleDriveSa
 window.renoweetDriveOS={connect:connectDrive,save:saveDrive,refresh:refreshDrive,exportJSON:exportJson,exportXLSX:exportXlsx,completeBackup,settings:driveSettings,selectYear,state};
 setTimeout(async()=>{await restoreVerifiedDriveCacheOnStartup();const c=document.getElementById('connectBtn'),r=document.getElementById('resetXlsxBtn'),e=document.getElementById('eraseLocalCacheBtn'),s=document.getElementById('saveNowBtn');if(c){c.textContent='Connect Google Drive';c.onclick=connectDrive}if(r){r.textContent='Drive settings';r.onclick=driveSettings}if(e){e.textContent='Complete ZIP backup';e.classList.remove('danger');e.onclick=completeBackup}if(s){s.textContent='Save now';s.onclick=()=>saveDrive(true);s.disabled=false}if(c?.parentElement&&!document.getElementById('driveYearSelect')){const sel=document.createElement('select');sel.id='driveYearSelect';sel.className=c.className||'btn';sel.style.minWidth='155px';sel.innerHTML=`<option value="${state.year}">${state.year} — Current</option>`;sel.onchange=()=>selectYear(sel.value);c.parentElement.insertBefore(sel,c)}try{const ds=document.getElementById('driveYearSelectDatabase');if(ds){ds.innerHTML=document.getElementById('driveYearSelect')?.innerHTML||`<option>${state.year}</option>`}}catch(e){}if(state.connected)await refreshYearSelector();if(!state.baseline)status('Drive v3 ready',`Year ${state.year} • yearly navigation, validation, recovery snapshots, manifest and stable IDs enabled`);historicalBanner()},900);
 })();
+
+// v3.2: make “Send to bookkeeping” a verified queue action in the shared yearly JSON.
+setTimeout(()=>{
+  if(typeof window.sendToBookkeeping==='function' && !window.__renoweetSendToBkWrapped){
+    const original=window.sendToBookkeeping;
+    window.sendToBookkeeping=function(){
+      if(state.readOnly){alert(`Historical year ${state.year} is read-only.`);return}
+      original.apply(this,arguments);
+      if(state.connected){
+        clearTimeout(state.timer);
+        saveDrive(true).then(ok=>{if(ok)try{toast('Invoice queued for Bookkeeping ✓')}catch(e){}});
+      }else{
+        try{toast('Invoice queued locally • connect Drive to sync')}catch(e){}
+      }
+    };
+    window.__renoweetSendToBkWrapped=true;
+  }
+},1200);

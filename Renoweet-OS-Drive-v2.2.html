@@ -2061,6 +2061,12 @@ function sendToBookkeeping(){
    "Email":p.customer.email||"",
    "Address":p.customer.address||"",
    "Project":p.title||"",
+   "Project ID":p.id||"",
+   "Project stage":p.stage||"",
+   "Project created":p.created||"",
+   "Project updated":p.updated||"",
+   "Project address":p.customer.address||"",
+   "Project description":p.description||"",
    "Description":description,
    "Subtotal ex VAT":+t.subtotal.toFixed(2),
    "VAT rate":+(p.quote.vat||21),
@@ -2068,7 +2074,6 @@ function sendToBookkeeping(){
    "Total incl VAT":+t.total.toFixed(2),
    "Status":"Ready for bookkeeping",
    "Sent at":new Date().toISOString(),
-   "Project ID":p.id||"",
    "Source database":activeDbName||fileHandle?.name||""
  };
 
@@ -2136,6 +2141,6 @@ window.addEventListener('beforeunload',e=>{if(formDirty){e.preventDefault();e.re
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="./renoweet-drive-core-v3.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="./renoweet-os-drive-adapter-v3.0.js"></script>
+<script src="./renoweet-os-drive-adapter-v3.2.js"></script>
 </body>
 </html>

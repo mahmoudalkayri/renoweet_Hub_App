@@ -533,7 +533,7 @@ async function unlockUI(){
   document.body.classList.remove("locked");
   sessionStorage.setItem("renoweet_unlocked","1");
   if(!fileHandle && !workbook){
-    $("status").textContent="Unlocked • connect your OneDrive XLSX to load bookkeeping data";
+    $("status").textContent="Unlocked • connect Google Drive to load the yearly bookkeeping database";
   }
 }
 function lockUI(){
@@ -1771,6 +1771,12 @@ function osInvoiceToBookkeeping(r){
     "Paid date":"",
     "Days overdue":"",
     "Notes":r["Project"]?("Renoweet OS project: "+r["Project"]):"Imported from Renoweet OS",
+    "Project":r["Project"]||"",
+    "Project ID":r["Project ID"]||"",
+    "Project stage":r["Project stage"]||"",
+    "Project address":r["Project address"]||r["Address"]||"",
+    "Project description":r["Project description"]||"",
+    "OS sent at":r["Sent at"]||"",
     "Source database":r["Source database"]||""
   };
 }
@@ -1938,6 +1944,6 @@ document.querySelectorAll(".tab").forEach(btn=>{
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="./renoweet-drive-core-v3.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="./renoweet-bookkeeping-drive-adapter-v3.1.js"></script>
+<script src="./renoweet-bookkeeping-drive-adapter-v3.2.js"></script>
 </body>
 </html>
