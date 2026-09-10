@@ -1,9 +1,9 @@
-const CACHE_NAME="renoweet-focus-hub-v2-4";
+const CACHE_NAME="renoweet-focus-hub-v2-6";
 const APP_SHELL=[
   "./","./index.html","./styles.css","./app.js","./manifest.webmanifest",
   "./icons/icon.svg","./icons/apple-touch-icon.png",
   "./Renoweet-OS-Drive-v2.2.html","./Renoweet-Bookkeeping-Drive-v2.2.html","./Renoweet-BOD-Drive-v2.2.html",
-  "./renoweet-drive-core-v2.5.js","./renoweet-os-drive-adapter-v2.js",
+  "./renoweet-drive-core-v2.6.js","./renoweet-os-drive-adapter-v2.js",
   "./renoweet-bookkeeping-drive-adapter-v2.js","./renoweet-bod-drive-adapter-v2.js"
 ];
 self.addEventListener("install",event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_SHELL)));self.skipWaiting()});

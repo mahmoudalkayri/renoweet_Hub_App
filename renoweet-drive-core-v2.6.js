@@ -9,7 +9,7 @@
 const Core={};
 const SCHEMA_VERSION=2, APP_VERSION='drive-v2.5';
 const DEFAULT_GOOGLE_CLIENT_ID='819845217406-569349vod25m15sb2omm03do2h1ll976.apps.googleusercontent.com';
-const LS={clientId:'renoweet_google_client_id_v1',token:'renoweet_google_access_token_v1',tokenAt:'renoweet_google_token_at_v1',folderId:'renoweet_drive_folder_id_v1',activeFolderId:'renoweet_drive_active_folder_id_v25',archivesFolderId:'renoweet_drive_archives_folder_id_v25',recoveryFolderId:'renoweet_drive_recovery_folder_id_v25',manifestId:'renoweet_drive_manifest_id_v25',activeId:'renoweet_drive_active_id_v1',activeYearId:'renoweet_drive_active_year_id_v25_',year:'renoweet_drive_year_v1',deviceId:'renoweet_device_id_v2',lastRecovery:'renoweet_last_recovery_v2_'};
+const LS={clientId:'renoweet_google_client_id_v1',token:'renoweet_google_access_token_v1',tokenAt:'renoweet_google_token_at_v1',folderId:'renoweet_drive_folder_id_v1',activeFolderId:'renoweet_drive_active_folder_id_v26',archivesFolderId:'renoweet_drive_archives_folder_id_v26',recoveryFolderId:'renoweet_drive_recovery_folder_id_v26',manifestId:'renoweet_drive_manifest_id_v26',activeId:'renoweet_drive_active_id_v1',activeYearId:'renoweet_drive_active_year_id_v25_',year:'renoweet_drive_year_v1',deviceId:'renoweet_device_id_v2',lastRecovery:'renoweet_last_recovery_v2_'};
 const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.file';
 const ROOT_FOLDER='Renoweet Data', ACTIVE_FOLDER='Active', ARCHIVE_FOLDER='Archives', RECOVERY_FOLDER='Recovery', MANIFEST_NAME='Renoweet-manifest.json';
 const CACHE_DB='RenoweetDriveCacheV2', CACHE_STORE='snapshots', RECOVERY_KEEP=20, RECOVERY_INTERVAL_MS=15*60*1000;
@@ -67,7 +67,31 @@ async function usableMeta(id,expectedName=null,expectedMime=null){if(!id)return 
 async function ensureFolder(name,parentId=null,cacheKey=null){if(cacheKey){const remembered=await usableMeta(localStorage.getItem(cacheKey),name,'application/vnd.google-apps.folder');if(remembered)return remembered}const parentQ=parentId?` and '${escQ(parentId)}' in parents`:'';const files=await listFiles(`name='${escQ(name)}' and mimeType='application/vnd.google-apps.folder' and trashed=false${parentQ}`);const folder=files[0]||await createMetadata({name,mimeType:'application/vnd.google-apps.folder',parents:parentId?[parentId]:undefined});if(cacheKey)localStorage.setItem(cacheKey,folder.id);return folder}
 async function ensureTree(){const root=await ensureFolder(ROOT_FOLDER,null,LS.folderId),active=await ensureFolder(ACTIVE_FOLDER,root.id,LS.activeFolderId),archives=await ensureFolder(ARCHIVE_FOLDER,root.id,LS.archivesFolderId),recovery=await ensureFolder(RECOVERY_FOLDER,root.id,LS.recoveryFolderId);return {root,active,archives,recovery}}
 function activeName(year=currentYear()){return `Renoweet-${safeYear(year)}.json`}
-async function findActive(year=currentYear()){year=safeYear(year);const tree=await ensureTree(),name=activeName(year),yearKey=LS.activeYearId+year;for(const id of [localStorage.getItem(yearKey),localStorage.getItem(LS.activeId)]){const remembered=await usableMeta(id,name);if(remembered){localStorage.setItem(yearKey,remembered.id);localStorage.setItem(LS.activeId,remembered.id);return {tree,file:remembered}}}const files=await listFiles(`name='${escQ(name)}' and trashed=false and '${escQ(tree.active.id)}' in parents`);const file=files[0]||null;if(file){localStorage.setItem(yearKey,file.id);localStorage.setItem(LS.activeId,file.id)}return {tree,file}}
+async function findActive(year=currentYear()){
+  year=safeYear(year);
+  const tree=await ensureTree(),name=activeName(year),yearKey=LS.activeYearId+year;
+  // Robust reconnect: Drive can contain duplicate Renoweet folders/files after an earlier
+  // interrupted setup. Do not trust the first filename match. Collect every file this
+  // OAuth app can access, validate each canonical database, and choose the highest revision.
+  const ids=[];
+  for(const id of [localStorage.getItem(yearKey),localStorage.getItem(LS.activeId)])if(id)ids.push(id);
+  try{for(const f of await listFiles(`name='${escQ(name)}' and trashed=false`))ids.push(f.id)}catch(e){console.warn('Global active-file scan failed',e)}
+  try{for(const f of await listFiles(`name='${escQ(name)}' and trashed=false and '${escQ(tree.active.id)}' in parents`))ids.push(f.id)}catch(e){console.warn('Active-folder scan failed',e)}
+  const seen=new Set(),candidates=[];
+  for(const id of ids){
+    if(!id||seen.has(id))continue;seen.add(id);
+    try{
+      const meta=await usableMeta(id,name);if(!meta)continue;
+      const text=await getText(id),parsed=JSON.parse(text),data=await verifyCanonical(parsed);
+      if(Number(data?.meta?.year)!==Number(year))continue;
+      candidates.push({meta,data,revision:Number(data?.meta?.revision||0),modified:String(meta.modifiedTime||'')});
+    }catch(e){console.warn('Ignoring invalid Renoweet year candidate',id,e)}
+  }
+  candidates.sort((a,b)=>b.revision-a.revision||b.modified.localeCompare(a.modified));
+  const best=candidates[0]?.meta||null;
+  if(best){localStorage.setItem(yearKey,best.id);localStorage.setItem(LS.activeId,best.id)}
+  return {tree,file:best};
+}
 function blankManifest(){return {schema:'renoweet.manifest',schemaVersion:1,updatedAt:now(),activeYear:currentYear(),years:{}}}
 async function loadManifest(create=true){const tree=await ensureTree();let file=await usableMeta(localStorage.getItem(LS.manifestId),MANIFEST_NAME);if(!file){const files=await listFiles(`name='${MANIFEST_NAME}' and trashed=false and '${escQ(tree.root.id)}' in parents`);file=files[0]||null}if(!file){if(!create)return null;const m=blankManifest(),f=await createTextFile(MANIFEST_NAME,tree.root.id,JSON.stringify(m,null,2));localStorage.setItem(LS.manifestId,f.id);return {data:m,file:f}}localStorage.setItem(LS.manifestId,file.id);try{const data=JSON.parse(await getText(file.id));if(data.schema!=='renoweet.manifest')throw 0;data.years=data.years||{};return {data,file}}catch(e){throw new Error('Renoweet manifest is invalid. Live data was not changed.') }}
 async function saveManifest(manifest,file){manifest.updatedAt=now();const text=JSON.stringify(manifest,null,2);const f=await updateTextFile(file.id,text);const back=await getText(file.id);if(await sha256Text(back)!==await sha256Text(text))throw new Error('Manifest verification failed.');return {data:manifest,file:f}}
