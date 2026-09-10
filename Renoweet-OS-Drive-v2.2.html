@@ -1542,8 +1542,8 @@ async function sendQuoteByWhatsApp(){try{const p=getP();saveProjectFromForm(fals
 
 function invoiceHTML(p){
  if(!p.invoice)p.invoice={};
- if(!p.invoice.number)p.invoice.number=nextInvoice();
  if(!p.invoice.date)p.invoice.date=today();
+ if(!p.invoice.number)p.invoice.number=nextInvoice(p.invoice.date);
  if(!p.invoice.dueDays||+p.invoice.dueDays===14)p.invoice.dueDays=3;
  const t=projectTotals(p),net=t.taxableSubtotal,vat=t.vat,grand=t.total;
  const due=new Date((p.invoice.date||today())+'T12:00:00');due.setDate(due.getDate()+(+p.invoice.dueDays||3));const dueDate=due.toISOString().slice(0,10);
@@ -1625,8 +1625,8 @@ function smartSendInvoice(){
  if(!p)return;
 
  saveProjectFromForm(false);
- if(!p.invoice.number)p.invoice.number=nextInvoice();
  if(!p.invoice.date)p.invoice.date=today();
+ if(!p.invoice.number)p.invoice.number=nextInvoice(p.invoice.date);
 
  const email=(p.customer.email||"").trim();
  const phone=(p.customer.phone||"").trim();
@@ -1811,7 +1811,31 @@ function removeMat(i){let p=getP();readMaterials(p);p.materials.splice(i,1);rend
 function addChecklist(){let p=getP(),x=prompt('Checklist item:');if(x){p.checklist.push({order:p.checklist.length+1,text:x,done:false});renderTabs();scheduleSave()}}
 function smartDraft(){let p=getP();saveProjectFromForm(false);let d=(p.description||'').toLowerCase(),hits=serviceTemplates.filter(t=>t.keys.some(k=>d.includes(k)));if(!hits.length)hits=[serviceTemplates[7]];p.scope=`Werkzaamheden:\n- Inspectie en inmeten van de bestaande situatie.\n- ${hits.map(x=>x.desc).join('.\n- ')}.\n- Montage, afwerking en functionele controle.\n- Werkplek netjes opleveren.\n\nUitgangspunten:\n- Definitieve maten en bereikbaarheid worden vóór uitvoering bevestigd.\n- Verborgen gebreken of niet zichtbare leidingen vallen buiten deze eerste inschatting.\n\nNiet inbegrepen tenzij expliciet vermeld:\n- Werkzaamheden buiten bovenstaande scope.`;p.estimate=hits.map(x=>({id:lineid(),desc:x.desc,qty:1,unit:x.unit,rate:x.price}));p.estimate.push({id:lineid(),desc:'Materiaal stelpost',qty:1,unit:'post',rate:250});currentTab='scope';renderTabs();scheduleSave();toast('Draft created')}
 function nextQuote(){let y=new Date().getFullYear(),n=db.projects.filter(p=>String(p.quote.number).startsWith('OFF-'+y)).length+1;return `OFF-${y}-${String(n).padStart(3,'0')}`}
-function nextInvoice(){let y=new Date().getFullYear(),n=db.projects.filter(p=>String(p.invoice.number).startsWith('INV-'+y)).length+1;return `INV-${y}-${String(n).padStart(3,'0')}`}
+
+function renoweetInvoiceQuarter(d){const x=new Date((d||new Date().toISOString().slice(0,10))+'T12:00:00'),y=x.getFullYear(),m=x.getMonth()+1;if(y===2026&&m>=6&&m<=9)return '2026-JUNSEP';return `${y}-Q${Math.floor((m-1)/3)+1}`}
+function renoweetInvoiceSeqFromNo(no){
+ const s=String(no||'').trim();
+ // Preferred Renoweet format: YYYY-DDMMNNN, e.g. 2026-1006011.
+ let m=s.match(/^(\d{4})-(\d{2})(\d{2})(\d{3})$/);
+ if(m)return {year:+m[1],day:+m[2],month:+m[3],seq:+m[4]};
+ // Read older temporary formats too, so they still participate in duplicate/sequence checks.
+ m=s.match(/^(?:INV-)?(\d{4})-(?:\d{2})?(\d{3})$/i);
+ return m?{year:+m[1],seq:+m[2]}:null;
+}
+function renoweetAllKnownInvoices(){
+ const out=[];
+ try{(db.projects||[]).forEach(p=>{if(p?.invoice?.number)out.push({no:p.invoice.number,date:p.invoice.date})})}catch(e){}
+ try{(data.invoices||[]).forEach(r=>{if(r?.['Invoice #'])out.push({no:r['Invoice #'],date:r.Date})})}catch(e){}
+ try{const c=window.__renoweetCanonical||{};(c.os?.projects||[]).forEach(p=>{if(p?.invoice?.number)out.push({no:p.invoice.number,date:p.invoice.date})});(c.bookkeeping?.invoices||[]).forEach(r=>{if(r?.['Invoice #'])out.push({no:r['Invoice #'],date:r.Date})})}catch(e){}
+ return out;
+}
+function renoweetNextInvoiceNumber(dateValue){
+ const ds=dateValue||new Date().toISOString().slice(0,10), d=new Date(ds+'T12:00:00'), y=d.getFullYear(), day=String(d.getDate()).padStart(2,'0'), m=String(d.getMonth()+1).padStart(2,'0'), bucket=renoweetInvoiceQuarter(ds);let max=0;
+ renoweetAllKnownInvoices().forEach(x=>{const xd=new Date(String(x.date||'')+'T12:00:00');if(isNaN(xd)||xd.getFullYear()!==y||renoweetInvoiceQuarter(x.date)!==bucket)return;const p=renoweetInvoiceSeqFromNo(x.no);if(p&&p.year===y)max=Math.max(max,p.seq)});
+ return `${y}-${day}${m}${String(max+1).padStart(3,'0')}`;
+}
+
+function nextInvoice(dateValue){return renoweetNextInvoiceNumber(dateValue||getP()?.invoice?.date||today())}
 function markQuoteSent(){let p=getP();saveProjectFromForm(false);if(!p.quote.number)p.quote.number=nextQuote();p.quote.status='Sent';p.stage='Quoted';addActivity(p,'Quotation',`Quotation ${p.quote.number} marked sent`,false);renderTabs();scheduleSave();toast('Quotation marked sent')}
 function markInvoiceSent(){let p=getP();saveProjectFromForm(false);if(!p.invoice.number)p.invoice.number=nextInvoice();p.invoice.status='Sent';addActivity(p,'Invoice',`Invoice ${p.invoice.number} marked sent`,false);renderTabs();scheduleSave();toast('Invoice marked sent')}
 function deletedProjectRow(p){
@@ -2065,8 +2089,8 @@ function sendGoogleReviewWhatsApp(){
 function sendToBookkeeping(){
  saveProjectFromForm(false);
  let p=getP(); // re-read after form save so the queued row uses the latest project state
- if(!p.invoice.number)p.invoice.number=nextInvoice();
  if(!p.invoice.date)p.invoice.date=today();
+ if(!p.invoice.number)p.invoice.number=nextInvoice(p.invoice.date);
  const queuedAt=new Date().toISOString();
  p.invoice.bookkeepingQueuedAt=queuedAt;
  p.invoice.bookkeepingStatus="Queued";

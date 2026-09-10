@@ -1235,23 +1235,38 @@ function render(){
   renderIncomeTax();
   $("deleted").innerHTML=deletedBookkeepingHTML();
 }
-function nextInvoiceNo(){
-  const y=new Date().getFullYear();
-  let max=0;
-  data.invoices.forEach(r=>{
-    const raw=String(r["Invoice #"]||"").trim();
-    const yearMatch=raw.match(/(?:INV-)?(\d{4}).*?(\d{3})$/i);
-    if(yearMatch&&Number(yearMatch[1])===y)max=Math.max(max,Number(yearMatch[2]));
-  });
-  return `INV-${y}-${String(max+1).padStart(3,"0")}`;
+
+function renoweetInvoiceQuarter(d){const x=new Date((d||new Date().toISOString().slice(0,10))+'T12:00:00'),y=x.getFullYear(),m=x.getMonth()+1;if(y===2026&&m>=6&&m<=9)return '2026-JUNSEP';return `${y}-Q${Math.floor((m-1)/3)+1}`}
+function renoweetInvoiceSeqFromNo(no){
+ const s=String(no||'').trim();
+ // Preferred Renoweet format: YYYY-DDMMNNN, e.g. 2026-1006011.
+ let m=s.match(/^(\d{4})-(\d{2})(\d{2})(\d{3})$/);
+ if(m)return {year:+m[1],day:+m[2],month:+m[3],seq:+m[4]};
+ // Read older temporary formats too, so they still participate in duplicate/sequence checks.
+ m=s.match(/^(?:INV-)?(\d{4})-(?:\d{2})?(\d{3})$/i);
+ return m?{year:+m[1],seq:+m[2]}:null;
 }
+function renoweetAllKnownInvoices(){
+ const out=[];
+ try{(db.projects||[]).forEach(p=>{if(p?.invoice?.number)out.push({no:p.invoice.number,date:p.invoice.date})})}catch(e){}
+ try{(data.invoices||[]).forEach(r=>{if(r?.['Invoice #'])out.push({no:r['Invoice #'],date:r.Date})})}catch(e){}
+ try{const c=window.__renoweetCanonical||{};(c.os?.projects||[]).forEach(p=>{if(p?.invoice?.number)out.push({no:p.invoice.number,date:p.invoice.date})});(c.bookkeeping?.invoices||[]).forEach(r=>{if(r?.['Invoice #'])out.push({no:r['Invoice #'],date:r.Date})})}catch(e){}
+ return out;
+}
+function renoweetNextInvoiceNumber(dateValue){
+ const ds=dateValue||new Date().toISOString().slice(0,10), d=new Date(ds+'T12:00:00'), y=d.getFullYear(), day=String(d.getDate()).padStart(2,'0'), m=String(d.getMonth()+1).padStart(2,'0'), bucket=renoweetInvoiceQuarter(ds);let max=0;
+ renoweetAllKnownInvoices().forEach(x=>{const xd=new Date(String(x.date||'')+'T12:00:00');if(isNaN(xd)||xd.getFullYear()!==y||renoweetInvoiceQuarter(x.date)!==bucket)return;const p=renoweetInvoiceSeqFromNo(x.no);if(p&&p.year===y)max=Math.max(max,p.seq)});
+ return `${y}-${day}${m}${String(max+1).padStart(3,'0')}`;
+}
+
+function nextInvoiceNo(dateValue){return renoweetNextInvoiceNumber(dateValue||document.getElementById('invDate')?.value||new Date().toISOString().slice(0,10))}
 function openModal(id){$(id).classList.add("open")} function closeModal(id){$(id).classList.remove("open")}
 function openInvoice(index=null){
   if(!ensurePeriodEditable(index===null?"create a new invoice":"edit an invoice"))return;
   editingInvoiceIndex=index; const r=index===null?{}:data.invoices[index];
   $("invoiceModalTitle").textContent=index===null?"New invoice":"Edit invoice";
   $("deleteInvoiceBtn").hidden=index===null;
-  $("invNo").value=r["Invoice #"]||nextInvoiceNo(); $("invDate").value=isoDate(r.Date)||new Date().toISOString().slice(0,10);
+  $("invDate").value=isoDate(r.Date)||new Date().toISOString().slice(0,10); $("invNo").value=r["Invoice #"]||nextInvoiceNo($("invDate").value);
   const ir=inferVatRate(r,true); $("invVatRate").value=["21","9","0"].includes(ir)?ir:"custom"; $("invCustomVat").value=$("invVatRate").value==="custom"?n(r.VAT):""; toggleInvoiceCustomVat();
   $("invCustomer").value=r.Customer||"";$("invContact").value=r.Contact||"";$("invAddress").value=r.Address||"";$("invDescription").value=r["Work description"]||"";
   $("invGross").value=r["Gross incl. VAT"]||"";$("invParking").value=r.Parking||0;$("invOther").value=r["Other costs"]||0;$("invStatus").value=r.Status||"Unknown";

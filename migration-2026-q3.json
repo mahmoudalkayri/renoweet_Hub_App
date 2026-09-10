@@ -1,0 +1,1179 @@
+{
+  "schema": "renoweet.legacy-migration",
+  "version": "4.0",
+  "sourceFile": "Renoweet_Boekhouding.xlsx + prior Q3 project source",
+  "year": 2026,
+  "notes": [
+    "Legacy invoice numbers are preserved exactly in YYYY-DDMMNNN format.",
+    "For 2026 June-September the last three digits continue as one sequence; Oct-Dec restarts at 001.",
+    "Missing project/customer information remains for manual completion in Renoweet OS.",
+    "Expenses are not auto-imported by this migration."
+  ],
+  "invoiceMapping": [
+    {
+      "old": "2026-1407001",
+      "date": "2026-07-14",
+      "new": "2026-1407001",
+      "gross": 800.0,
+      "parking": 0.0,
+      "customer": "(missing)",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-2007002",
+      "date": "2026-07-20",
+      "new": "2026-2007002",
+      "gross": 50.0,
+      "parking": 0.0,
+      "customer": "(missing)",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-2307003",
+      "date": "2026-07-23",
+      "new": "2026-2307003",
+      "gross": 1160.5,
+      "parking": 68.6,
+      "customer": "(missing)",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-2907004",
+      "date": "2026-07-29",
+      "new": "2026-2907004",
+      "gross": 1062.4,
+      "parking": 46.0,
+      "customer": "(missing)",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-0808005",
+      "date": "2026-08-08",
+      "new": "2026-0808005",
+      "gross": 822.8,
+      "parking": 0.0,
+      "customer": "Dennis",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-1308006",
+      "date": "2026-08-13",
+      "new": "2026-1308006",
+      "gross": 1012.2,
+      "parking": 20.0,
+      "customer": "1024 BD xiong",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-1708007",
+      "date": "2026-08-17",
+      "new": "2026-1708007",
+      "gross": 1025.0,
+      "parking": 70.0,
+      "customer": "1017 eliese",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-1808008",
+      "date": "2026-08-18",
+      "new": "2026-1808008",
+      "gross": 565.0,
+      "parking": 30.0,
+      "customer": "Vrijheidslaan 1079",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-2008009",
+      "date": "2026-08-20",
+      "new": "2026-2008009",
+      "gross": 350.0,
+      "parking": 49.0,
+      "customer": "Vrijheidslaan",
+      "description": "(missing)"
+    },
+    {
+      "old": "2026-3108010",
+      "date": "2026-08-31",
+      "new": "2026-3108010",
+      "gross": 1400.0,
+      "parking": 79.0,
+      "customer": "(missing)",
+      "description": "Timmerwerk: de complete constructie van een scheidingswand."
+    }
+  ],
+  "projects": [
+    {
+      "id": "legacy_prj_2026q3_001",
+      "created": "2026-07-14",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_001",
+        "name": "",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-07001",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-1407001. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_001",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 661.16
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_001",
+          "timestamp": "2026-07-14T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-1407001."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-07-14",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 0.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-1407001",
+        "date": "2026-07-14",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-1407001"
+    },
+    {
+      "id": "legacy_prj_2026q3_002",
+      "created": "2026-07-20",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_002",
+        "name": "",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-07002",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-2007002. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_002",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 41.32
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_002",
+          "timestamp": "2026-07-20T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-2007002."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-07-20",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 0.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-2007002",
+        "date": "2026-07-20",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-2007002"
+    },
+    {
+      "id": "legacy_prj_2026q3_003",
+      "created": "2026-07-23",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_003",
+        "name": "",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-07003",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-2307003. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_003",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 902.4
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_003",
+          "timestamp": "2026-07-23T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-2307003."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-07-23",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 68.6,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-2307003",
+        "date": "2026-07-23",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-2307003"
+    },
+    {
+      "id": "legacy_prj_2026q3_004",
+      "created": "2026-07-29",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_004",
+        "name": "",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-07004",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-2907004. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_004",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 840.0
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_004",
+          "timestamp": "2026-07-29T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-2907004."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-07-29",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 46.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-2907004",
+        "date": "2026-07-29",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-2907004"
+    },
+    {
+      "id": "legacy_prj_2026q3_005",
+      "created": "2026-08-08",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_005",
+        "name": "Dennis",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-08005",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-0808005. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_005",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 680.0
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_005",
+          "timestamp": "2026-08-08T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-0808005."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-08-08",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 0.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-0808005",
+        "date": "2026-08-08",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-0808005"
+    },
+    {
+      "id": "legacy_prj_2026q3_006",
+      "created": "2026-08-13",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_006",
+        "name": "1024 BD xiong",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-08006",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-1308006. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_006",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 820.0
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_006",
+          "timestamp": "2026-08-13T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-1308006."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-08-13",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 20.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-1308006",
+        "date": "2026-08-13",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-1308006"
+    },
+    {
+      "id": "legacy_prj_2026q3_007",
+      "created": "2026-08-17",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_007",
+        "name": "1017 eliese",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-08007",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-1708007. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_007",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 789.26
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_007",
+          "timestamp": "2026-08-17T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-1708007."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-08-17",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 70.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-1708007",
+        "date": "2026-08-17",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-1708007"
+    },
+    {
+      "id": "legacy_prj_2026q3_008",
+      "created": "2026-08-18",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_008",
+        "name": "Vrijheidslaan 1079",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-08008",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-1808008. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_008",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 442.15
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_008",
+          "timestamp": "2026-08-18T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-1808008."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-08-18",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 30.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-1808008",
+        "date": "2026-08-18",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-1808008"
+    },
+    {
+      "id": "legacy_prj_2026q3_009",
+      "created": "2026-08-20",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_009",
+        "name": "Vrijheidslaan",
+        "phone": "",
+        "email": "",
+        "address": ""
+      },
+      "title": "Legacy project — invoice 2026-08009",
+      "description": "",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-2008009. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_009",
+          "desc": "Legacy invoiced work — description to complete",
+          "qty": 1,
+          "unit": "post",
+          "rate": 248.76
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_009",
+          "timestamp": "2026-08-20T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-2008009."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-08-20",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 49.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-2008009",
+        "date": "2026-08-20",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-2008009"
+    },
+    {
+      "id": "legacy_prj_2026q3_010",
+      "created": "2026-08-31",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Completed",
+      "customer": {
+        "id": "legacy_cus_2026q3_010",
+        "name": "",
+        "phone": "",
+        "email": "",
+        "address": "Jacob van Lennepkade 43, 1053 MJ Amsterdam"
+      },
+      "title": "Timmerwerk: de complete constructie van een scheidingswand.",
+      "description": "Timmerwerk: de complete constructie van een scheidingswand.",
+      "scope": "",
+      "notes": "Imported from legacy workbook. Original invoice number: 2026-3108010. Review and complete missing project/customer information.",
+      "estimate": [
+        {
+          "id": "legacy_est_2026q3_010",
+          "desc": "Timmerwerk: de complete constructie van een scheidingswand.",
+          "qty": 1,
+          "unit": "post",
+          "rate": 1091.74
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_2026q3_010",
+          "timestamp": "2026-08-31T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy workbook; original invoice 2026-3108010."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-08-31",
+        "validDays": 14,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 79.0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "",
+        "advancePct": 50,
+        "installments": 0,
+        "assumptions": ""
+      },
+      "invoice": {
+        "number": "2026-3108010",
+        "date": "2026-08-31",
+        "dueDays": 3,
+        "status": "Sent"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-2026-3108010"
+    },
+    {
+      "id": "legacy_prj_2026q3_offer_001",
+      "created": "2026-08-10",
+      "updated": "2026-09-10T00:00:00.000Z",
+      "stage": "Quoted",
+      "customer": {
+        "id": "legacy_cus_2026q3_offer_001",
+        "name": "",
+        "phone": "",
+        "email": "",
+        "address": "Jonkerheer van Sypesteynlaan 53c, 1231 XM Loosdrecht"
+      },
+      "title": "Timber shed dismantling and reassembly",
+      "description": "Legacy quotation for dismantling, foundation preparation, reassembly and modification of an existing timber shed.",
+      "scope": "",
+      "notes": "Imported from legacy quotation sheet. Customer name/contact details require review.",
+      "estimate": [
+        {
+          "id": "legacy_est_offer_1",
+          "desc": "Disassembly of existing timber shed. Carefully dismantle the existing shed and stack reusable components.",
+          "qty": 1,
+          "unit": "post",
+          "rate": 650
+        },
+        {
+          "id": "legacy_est_offer_2",
+          "desc": "Foundation preparation. Prepare and level the existing foundation/base ready for reassembly of the shed. Materials excluded.",
+          "qty": 1,
+          "unit": "post",
+          "rate": 450
+        },
+        {
+          "id": "legacy_est_offer_3",
+          "desc": "Reassembly and modification of shed, including one new structural opening and replacement timber supplied by client where required.",
+          "qty": 1,
+          "unit": "post",
+          "rate": 980
+        }
+      ],
+      "materials": [],
+      "documents": [],
+      "payments": [],
+      "purchaseOrders": [],
+      "activity": [
+        {
+          "id": "legacy_act_offer_1",
+          "timestamp": "2026-08-10T12:00:00.000Z",
+          "type": "Migration",
+          "text": "Imported from legacy quotation sheet."
+        }
+      ],
+      "followUps": [],
+      "acceptance": {
+        "status": "Pending",
+        "date": "",
+        "notes": ""
+      },
+      "schedule": {
+        "start": "",
+        "end": "",
+        "time": "",
+        "notes": "",
+        "shareClient": false,
+        "inviteEmail": "",
+        "inviteStatus": "",
+        "calendarSharedWith": "",
+        "calendarShareSignature": ""
+      },
+      "quote": {
+        "number": "",
+        "date": "2026-08-10",
+        "validDays": 15,
+        "vat": 21,
+        "status": "Draft",
+        "parking": 0,
+        "travel": 0,
+        "exclusions": "",
+        "paymentTerms": "30% advance, 50% before reassembly, 20% on completion",
+        "advancePct": 30,
+        "installments": 2,
+        "assumptions": "Existing roof structure and majority of timber components assumed reusable; hidden defects and major foundation reconstruction excluded."
+      },
+      "invoice": {
+        "number": "",
+        "date": "2026-08-10",
+        "dueDays": 3,
+        "status": "Draft"
+      },
+      "checklist": [],
+      "legacySourceKey": "xlsx-2026q3-offer-loosdrecht"
+    }
+  ],
+  "bookkeepingInvoices": [
+    {
+      "Invoice #": "2026-1407001",
+      "Date": "2026-07-14",
+      "Customer": "",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 800.0,
+      "Parking": 0.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 138.84,
+      "Net revenue": 661.16,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-1407001. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-1407001",
+      "Project ID": "legacy_prj_2026q3_001",
+      "Original Invoice #": "2026-1407001"
+    },
+    {
+      "Invoice #": "2026-2007002",
+      "Date": "2026-07-20",
+      "Customer": "",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 50.0,
+      "Parking": 0.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 8.68,
+      "Net revenue": 41.32,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-2007002. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-2007002",
+      "Project ID": "legacy_prj_2026q3_002",
+      "Original Invoice #": "2026-2007002"
+    },
+    {
+      "Invoice #": "2026-2307003",
+      "Date": "2026-07-23",
+      "Customer": "",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 1160.5,
+      "Parking": 68.6,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 189.5,
+      "Net revenue": 902.4,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-2307003. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-2307003",
+      "Project ID": "legacy_prj_2026q3_003",
+      "Original Invoice #": "2026-2307003"
+    },
+    {
+      "Invoice #": "2026-2907004",
+      "Date": "2026-07-29",
+      "Customer": "",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 1062.4,
+      "Parking": 46.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 176.4,
+      "Net revenue": 840.0,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-2907004. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-2907004",
+      "Project ID": "legacy_prj_2026q3_004",
+      "Original Invoice #": "2026-2907004"
+    },
+    {
+      "Invoice #": "2026-0808005",
+      "Date": "2026-08-08",
+      "Customer": "Dennis",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 822.8,
+      "Parking": 0.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 142.8,
+      "Net revenue": 680.0,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-0808005. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-0808005",
+      "Project ID": "legacy_prj_2026q3_005",
+      "Original Invoice #": "2026-0808005"
+    },
+    {
+      "Invoice #": "2026-1308006",
+      "Date": "2026-08-13",
+      "Customer": "1024 BD xiong",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 1012.2,
+      "Parking": 20.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 172.2,
+      "Net revenue": 820.0,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-1308006. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-1308006",
+      "Project ID": "legacy_prj_2026q3_006",
+      "Original Invoice #": "2026-1308006"
+    },
+    {
+      "Invoice #": "2026-1708007",
+      "Date": "2026-08-17",
+      "Customer": "1017 eliese",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 1025.0,
+      "Parking": 70.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 165.74,
+      "Net revenue": 789.26,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-1708007. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-1708007",
+      "Project ID": "legacy_prj_2026q3_007",
+      "Original Invoice #": "2026-1708007"
+    },
+    {
+      "Invoice #": "2026-1808008",
+      "Date": "2026-08-18",
+      "Customer": "Vrijheidslaan 1079",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 565.0,
+      "Parking": 30.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 92.85,
+      "Net revenue": 442.15,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-1808008. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-1808008",
+      "Project ID": "legacy_prj_2026q3_008",
+      "Original Invoice #": "2026-1808008"
+    },
+    {
+      "Invoice #": "2026-2008009",
+      "Date": "2026-08-20",
+      "Customer": "Vrijheidslaan",
+      "Contact": "",
+      "Address": "",
+      "Work description": "Legacy invoiced work — details to complete",
+      "Gross incl. VAT": 350.0,
+      "Parking": 49.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 52.24,
+      "Net revenue": 248.76,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-2008009. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-2008009",
+      "Project ID": "legacy_prj_2026q3_009",
+      "Original Invoice #": "2026-2008009"
+    },
+    {
+      "Invoice #": "2026-3108010",
+      "Date": "2026-08-31",
+      "Customer": "",
+      "Contact": "",
+      "Address": "Jacob van Lennepkade 43, 1053 MJ Amsterdam",
+      "Work description": "Timmerwerk: de complete constructie van een scheidingswand.",
+      "Gross incl. VAT": 1400.0,
+      "Parking": 79.0,
+      "Other costs": 0,
+      "VAT rate": "21",
+      "VAT": 229.26,
+      "Net revenue": 1091.74,
+      "Status": "Unknown",
+      "Due date": "",
+      "Paid date": "",
+      "Notes": "Imported from legacy workbook. Original invoice number: 2026-3108010. Payment status requires review.",
+      "_migrationKey": "xlsx-2026q3-2026-3108010",
+      "Project ID": "legacy_prj_2026q3_010",
+      "Original Invoice #": "2026-3108010"
+    }
+  ]
+}
