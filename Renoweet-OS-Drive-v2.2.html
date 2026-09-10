@@ -2038,10 +2038,13 @@ function sendGoogleReviewWhatsApp(){
  toast('Google review request opened in WhatsApp');
 }
 function sendToBookkeeping(){
- let p=getP();
  saveProjectFromForm(false);
+ let p=getP(); // re-read after form save so the queued row uses the latest project state
  if(!p.invoice.number)p.invoice.number=nextInvoice();
  if(!p.invoice.date)p.invoice.date=today();
+ const queuedAt=new Date().toISOString();
+ p.invoice.bookkeepingQueuedAt=queuedAt;
+ p.invoice.bookkeepingStatus="Queued";
 
  let t=projectTotals(p);
  let dueDate="";
@@ -2073,7 +2076,8 @@ function sendToBookkeeping(){
    "VAT":+t.vat.toFixed(2),
    "Total incl VAT":+t.total.toFixed(2),
    "Status":"Ready for bookkeeping",
-   "Sent at":new Date().toISOString(),
+   "Sent at":queuedAt,
+   "Queue token":queuedAt,
    "Source database":activeDbName||fileHandle?.name||""
  };
 
