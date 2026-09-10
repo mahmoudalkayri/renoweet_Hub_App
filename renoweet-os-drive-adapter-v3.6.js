@@ -53,7 +53,41 @@ async function restoreVerifiedDriveCacheOnStartup(){
 }
 
 async function connectDrive(){try{if(!RenoweetDrive.clientId())RenoweetDrive.configure();if(!RenoweetDrive.clientId())return;status('Connecting Google Drive…','Validating the yearly database');await RenoweetDrive.authorize(true);const info=await RenoweetDrive.listAvailableYears();state.activeYear=Number(info.activeYear||RenoweetDrive.currentYear());if(!info.years.includes(state.year))state.year=state.activeYear;state.readOnly=state.year!==state.activeYear;const remote=state.readOnly?await RenoweetDrive.loadExistingYear(state.year):await RenoweetDrive.loadYear(state.year,true);if(!remote)throw new Error(`Renoweet-${state.year}.json was not found.`);const r=remote.data.os,hasRemote=(r.projects?.length||r.bookkeeping?.length||r.deleted?.length),remoteRevision=Number(remote.data?.meta?.revision||0),remoteOsRevision=Number(remote.data?.meta?.sections?.osRevision||0),isTrulyNew=(remoteRevision===0&&remoteOsRevision===0&&!hasRemote),local=localSnapshot(),hasLocal=(local.projects.length||local.bookkeeping.length||local.deleted.length);if(!state.readOnly&&isTrulyNew&&hasLocal){if(confirm(`Renoweet-${state.year}.json is new. Upload the OS data currently shown on this device as the starting OS data?`)){const saved=await RenoweetDrive.saveSection('os',local,{year:state.year,sectionRevision:0,forceRecovery:true,recoveryReason:'initial-os-import'});applyRemote(saved.data.os,false);state.sectionRevision=saved.sectionRevision;state.baseline=RenoweetDrive.clone(saved.data.os)}else{applyRemote(r);state.sectionRevision=remote.data.meta.sections.osRevision;state.baseline=RenoweetDrive.clone(r)}}else{applyRemote(r);state.sectionRevision=remote.data.meta.sections.osRevision;state.baseline=RenoweetDrive.clone(r)}state.connected=true;status(state.readOnly?`Historical ${state.year} • READ ONLY`:'Google Drive connected ✓',`Renoweet-${state.year}.json • OS revision ${state.sectionRevision} • checksum verified`);await refreshYearSelector();historicalBanner();const b=document.getElementById('saveNowBtn');if(b)b.disabled=state.readOnly}catch(e){console.error(e);status('Drive not connected',e.message);alert(e.message)}}
-async function saveDrive(manual=false){if(state.readOnly){if(manual)alert(`Renoweet ${state.year} is a historical read-only year. Switch back to ${state.activeYear} to save changes.`);return false}if(state.saving)return false;if(!state.connected){if(manual)await connectDrive();else return false;if(!state.connected)return false}state.saving=true;clearTimeout(state.timer);try{try{await cacheBrowserState(true)}catch(e){};status('Saving…','Local safety copy kept until Drive verification completes');const payload=localSnapshot();let saved;try{saved=await RenoweetDrive.saveSection('os',payload,{...state,forceRecovery:manual,recoveryReason:manual?'manual-os-save':'os-autosave'})}catch(e){if(e.name!=='RenoweetConflictError')throw e;const remote=e.remote.data.os;if(typeof mergeDatabases!=='function')throw e;const merged=mergeDatabases(state.baseline||{projects:[],bookkeeping:[],deleted:[]},payload,remote);applyRemote(merged.merged);saved=await RenoweetDrive.saveSection('os',localSnapshot(),{year:state.year,sectionRevision:e.remoteSectionRevision,forceRecovery:true,recoveryReason:'os-conflict-merge'});if(merged.stats.conflicts&&manual)alert(`Renoweet merged ${merged.stats.conflicts} overlapping OS change(s) from another device. Review the affected project before continuing.`)}applyRemote(saved.data.os,false);state.sectionRevision=saved.sectionRevision;state.baseline=RenoweetDrive.clone(saved.data.os);try{lastSyncedDb=RenoweetDrive.clone(state.baseline)}catch(e){};try{await cacheBrowserState(false)}catch(e){};status('Saved to Google Drive ✓',`OS revision ${state.sectionRevision} • checksum verified • ${new Date().toLocaleTimeString()}`);if(manual)try{toast('Saved & verified')}catch(e){};return true}catch(e){console.error(e);status('Save stopped',e.message);if(manual)alert('Renoweet did not overwrite anything.\n\n'+e.message);return false}finally{state.saving=false}}
+async function saveDrive(manual=false){
+ if(state.readOnly){if(manual)alert(`Renoweet ${state.year} is a historical read-only year. Switch back to ${state.activeYear} to save changes.`);return false}
+ // v3.6: never report a false failure merely because an autosave is already running.
+ // Wait for the in-flight save, then continue with a fresh manual save so the newest UI state
+ // (including a just-queued bookkeeping invoice) is definitely included and verified.
+ if(state.saving){
+   try{if(state.savePromise)await state.savePromise}catch(e){}
+   if(!manual)return true
+ }
+ if(!state.connected){if(manual)await connectDrive();else return false;if(!state.connected)return false}
+ clearTimeout(state.timer);
+ const run=(async()=>{
+  state.saving=true;
+  try{
+   try{await cacheBrowserState(true)}catch(e){}
+   status('Saving…','Local safety copy kept until Drive verification completes');
+   const payload=localSnapshot();let saved;
+   try{saved=await RenoweetDrive.saveSection('os',payload,{...state,forceRecovery:manual,recoveryReason:manual?'manual-os-save':'os-autosave'})}
+   catch(e){
+    if(e.name!=='RenoweetConflictError')throw e;
+    const remote=e.remote.data.os;if(typeof mergeDatabases!=='function')throw e;
+    const merged=mergeDatabases(state.baseline||{projects:[],bookkeeping:[],deleted:[]},payload,remote);
+    applyRemote(merged.merged);
+    saved=await RenoweetDrive.saveSection('os',localSnapshot(),{year:state.year,sectionRevision:e.remoteSectionRevision,forceRecovery:true,recoveryReason:'os-conflict-merge'});
+    if(merged.stats.conflicts&&manual)alert(`Renoweet merged ${merged.stats.conflicts} overlapping OS change(s) from another device. Review the affected project before continuing.`)
+   }
+   applyRemote(saved.data.os,false);state.sectionRevision=saved.sectionRevision;state.baseline=RenoweetDrive.clone(saved.data.os);
+   try{lastSyncedDb=RenoweetDrive.clone(state.baseline)}catch(e){};try{await cacheBrowserState(false)}catch(e){}
+   status('Saved to Google Drive ✓',`OS revision ${state.sectionRevision} • checksum verified • ${new Date().toLocaleTimeString()}`);
+   if(manual)try{toast('Saved & verified')}catch(e){};return true
+  }catch(e){console.error(e);status('Save stopped',e.message);if(manual)alert('Renoweet did not overwrite anything.\n\n'+e.message);return false}
+  finally{state.saving=false;state.savePromise=null}
+ })();
+ state.savePromise=run;return await run
+}
 function scheduleDriveSave(){if(state.readOnly){historicalBanner();return}try{cacheBrowserState(true)}catch(e){};clearTimeout(state.timer);state.timer=setTimeout(()=>saveDrive(false),900)}
 async function refreshDrive(){if(!state.connected)return connectDrive();try{const remote=state.readOnly?await RenoweetDrive.loadExistingYear(state.year):await RenoweetDrive.loadYear(state.year,true);if(!remote)throw new Error(`Renoweet-${state.year}.json was not found.`);if(state.readOnly||remote.data.meta.sections.osRevision!==state.sectionRevision){if(state.readOnly||confirm('A newer OS revision exists on Google Drive. Load it now?')){applyRemote(remote.data.os);state.sectionRevision=remote.data.meta.sections.osRevision;state.baseline=RenoweetDrive.clone(remote.data.os);status(state.readOnly?`Historical ${state.year} • READ ONLY`:'Refreshed from Drive ✓',`OS revision ${state.sectionRevision} • checksum verified`)}}else status('Already current ✓',`OS revision ${state.sectionRevision}`);historicalBanner()}catch(e){alert(e.message)}}
 async function exportJson(){const remote=state.connected?(state.readOnly?await RenoweetDrive.loadExistingYear(state.year):await RenoweetDrive.loadYear(state.year,true)):null,c=remote?.data||RenoweetDrive.blankCanonical(state.year);c.os=localSnapshot();await RenoweetDrive.downloadJSON(c,`Renoweet-${state.year}-CURRENT.json`)}
@@ -66,7 +100,7 @@ window.renoweetDriveOS={connect:connectDrive,save:saveDrive,refresh:refreshDrive
 setTimeout(async()=>{await restoreVerifiedDriveCacheOnStartup();const c=document.getElementById('connectBtn'),r=document.getElementById('resetXlsxBtn'),e=document.getElementById('eraseLocalCacheBtn'),s=document.getElementById('saveNowBtn');if(c){c.textContent='Connect Google Drive';c.onclick=connectDrive}if(r){r.textContent='Drive settings';r.onclick=driveSettings}if(e){e.textContent='Complete ZIP backup';e.classList.remove('danger');e.onclick=completeBackup}if(s){s.textContent='Save now';s.onclick=()=>saveDrive(true);s.disabled=false}if(c?.parentElement&&!document.getElementById('driveYearSelect')){const sel=document.createElement('select');sel.id='driveYearSelect';sel.className=c.className||'btn';sel.style.minWidth='155px';sel.innerHTML=`<option value="${state.year}">${state.year} — Current</option>`;sel.onchange=()=>selectYear(sel.value);c.parentElement.insertBefore(sel,c)}try{const ds=document.getElementById('driveYearSelectDatabase');if(ds){ds.innerHTML=document.getElementById('driveYearSelect')?.innerHTML||`<option>${state.year}</option>`}}catch(e){}if(state.connected)await refreshYearSelector();if(!state.baseline)status('Drive v3 ready',`Year ${state.year} • yearly navigation, validation, recovery snapshots, manifest and stable IDs enabled`);historicalBanner()},900);
 })();
 
-// v3.5: make “Send to bookkeeping” a verified queue action in the shared yearly JSON.
+// v3.6: make “Send to bookkeeping” a verified queue action in the shared yearly JSON.
 // This wrapper deliberately uses the public adapter API because the private adapter state
 // lives inside the IIFE above and is not visible here.
 setTimeout(()=>{
