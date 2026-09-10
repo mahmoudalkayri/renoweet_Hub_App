@@ -234,7 +234,7 @@ body.locked header,body.locked main{filter:blur(8px);pointer-events:none;user-se
 #invoicePreview .ros-doc-title div{font-size:9.4pt;line-height:1.45;color:#243b42}
 #invoicePreview .ros-doc-title strong{font-weight:800}
 #invoicePreview .ros-doc-rule{height:1px;background:#315860;margin:5mm 0}
-#invoicePreview .ros-doc-party{display:grid;grid-template-columns:1fr 1fr;gap:18mm;margin-bottom:6mm}
+#invoicePreview .ros-doc-party{display:grid;grid-template-columns:1fr 1fr;gap:18mm;margin-bottom:6mm;color:#142d35}
 #invoicePreview .ros-doc-kicker{font-size:8.4pt;letter-spacing:.08em;text-transform:uppercase;color:#6a7e83}
 #invoicePreview .ros-doc-party strong{font-size:11pt}
 #invoicePreview .ros-doc-party>div{font-size:9.6pt;line-height:1.38}
@@ -255,6 +255,42 @@ body.locked header,body.locked main{filter:blur(8px);pointer-events:none;user-se
 #invoicePreview .ros-invoice-footer span:last-child{text-align:right;white-space:nowrap}
 @media(max-width:700px){#invoicePreview{padding:4px}#invoicePreview .ros-invoice-preview{transform-origin:top left;transform:scale(.48);margin:6px 0 -151mm 4px;box-shadow:none}}
 @media(max-width:430px){#invoicePreview .ros-invoice-preview{transform:scale(.43);margin-bottom:-169mm}}
+
+/* Off-screen PDF clone: same invoice styling outside #invoicePreview. */
+.ros-bk-pdf-stage{background:#e8edf2;padding:14px;overflow:auto}
+.ros-bk-pdf-stage .ros-invoice-preview{width:210mm;max-width:none;margin:0 auto;background:#fff;color:#142d35;box-sizing:border-box;box-shadow:0 10px 30px #0001;font-family:Arial,Helvetica,sans-serif}
+.ros-bk-pdf-stage .ros-invoice-page{width:210mm;height:297mm;min-height:297mm;padding:14mm 16mm 13mm;box-sizing:border-box;position:relative;background:#fff;overflow:hidden;margin:0}
+.ros-bk-pdf-stage .ros-invoice-content{width:178mm;max-width:178mm;min-width:178mm;margin:0;box-sizing:border-box;overflow:hidden}
+.ros-bk-pdf-stage .ros-doc-header{display:flex;justify-content:space-between;gap:18mm;align-items:flex-start}
+.ros-bk-pdf-stage .ros-doc-brand{max-width:112mm}
+.ros-bk-pdf-stage .ros-doc-brandline{display:flex;align-items:flex-end;gap:3mm;margin-bottom:1.8mm}
+.ros-bk-pdf-stage .ros-doc-brandline img{width:13mm!important;height:auto!important;display:block!important;margin:0!important;flex:0 0 auto;align-self:flex-end}
+.ros-bk-pdf-stage .ros-doc-brandline h2{font-size:17pt;line-height:.86;margin:0 0 .4mm 0!important;color:#173a43;white-space:nowrap;align-self:flex-end}
+.ros-bk-pdf-stage .ros-doc-brand p{font-size:8.8pt;line-height:1.42;margin:0;color:#334b52}
+.ros-bk-pdf-stage .ros-doc-title{text-align:right;min-width:54mm}
+.ros-bk-pdf-stage .ros-doc-title h1{font-size:21pt;line-height:1;margin:0 0 3mm;color:#173a43}
+.ros-bk-pdf-stage .ros-doc-title div{font-size:9.4pt;line-height:1.45;color:#243b42}
+.ros-bk-pdf-stage .ros-doc-title strong{font-weight:800}
+.ros-bk-pdf-stage .ros-doc-rule{height:1px;background:#315860;margin:5mm 0}
+.ros-bk-pdf-stage .ros-doc-party{display:grid;grid-template-columns:1fr 1fr;gap:18mm;margin-bottom:6mm}
+.ros-bk-pdf-stage .ros-doc-kicker{font-size:8.4pt;letter-spacing:.08em;text-transform:uppercase;color:#6a7e83}
+.ros-bk-pdf-stage .ros-doc-party strong{font-size:11pt}
+.ros-bk-pdf-stage .ros-doc-party>div{font-size:9.6pt;line-height:1.38}
+.ros-bk-pdf-stage .ros-doc-section-title{font-size:13pt;font-weight:800;color:#173a43;margin:3mm 0}
+.ros-bk-pdf-stage .ros-doc-table{display:table!important;width:100%!important;min-width:0!important;max-width:100%!important;border-collapse:collapse!important;border-spacing:0!important;table-layout:fixed!important;font-size:10pt!important;background:#fff!important;color:#142d35!important;margin:0!important;box-sizing:border-box!important}
+.ros-bk-pdf-stage .ros-doc-table col:nth-child(1){width:52%!important}.ros-bk-pdf-stage .ros-doc-table col:nth-child(2){width:12%!important}.ros-bk-pdf-stage .ros-doc-table col:nth-child(3){width:17%!important}.ros-bk-pdf-stage .ros-doc-table col:nth-child(4){width:19%!important}
+.ros-bk-pdf-stage .ros-doc-table th,.ros-bk-pdf-stage .ros-doc-table td{box-sizing:border-box!important;min-width:0!important;max-width:none!important;overflow:hidden!important;position:static!important;white-space:normal}
+.ros-bk-pdf-stage .ros-doc-table th{background:#eaf0ef!important;color:#142d35!important;border-top:1px solid #9eafb2!important;border-bottom:1px solid #9eafb2!important;padding:2.2mm 1.4mm!important;font-weight:700!important}
+.ros-bk-pdf-stage .ros-doc-table td{background:#fff!important;color:#142d35!important;border-bottom:1px solid #d7dfe0!important;padding:2.3mm 1.4mm!important;vertical-align:top!important;overflow-wrap:anywhere!important}
+.ros-bk-pdf-stage .ros-doc-table .d{text-align:left!important}.ros-bk-pdf-stage .ros-doc-table .q{text-align:center!important}.ros-bk-pdf-stage .ros-doc-table .r,.ros-bk-pdf-stage .ros-doc-table .a{text-align:right!important;white-space:nowrap!important}
+.ros-bk-pdf-stage .ros-doc-summary{width:88mm;max-width:88mm;margin:5mm 0 0 auto;font-size:10.2pt;color:#142d35}
+.ros-bk-pdf-stage .ros-doc-summary-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7mm;align-items:center;padding:1.65mm 0;border-bottom:1px dotted #aeb9bb}
+.ros-bk-pdf-stage .ros-doc-summary-row .label{white-space:nowrap!important}.ros-bk-pdf-stage .ros-doc-summary-row strong{white-space:nowrap!important;text-align:right}
+.ros-bk-pdf-stage .ros-doc-summary-row.grand{font-size:12pt;font-weight:800;border-top:1.5px solid #173a43;border-bottom:1.5px solid #173a43;margin-top:1mm;padding:2.25mm 0}
+.ros-bk-pdf-stage .ros-invoice-terms{margin-top:7mm;padding:3.6mm;background:#f3f7f6;border-radius:2mm;font-size:9.3pt;line-height:1.45;color:#334b52}
+.ros-bk-pdf-stage .ros-invoice-terms p{margin:0 0 1.4mm}.ros-bk-pdf-stage .ros-invoice-terms p:last-child{margin-bottom:0}
+.ros-bk-pdf-stage .ros-invoice-footer{position:absolute;left:16mm;right:16mm;bottom:8mm;font-size:8.4pt;color:#667;display:flex;justify-content:space-between;gap:8mm}
+.ros-bk-pdf-stage .ros-invoice-footer span:last-child{text-align:right;white-space:nowrap}
 
 </style>
 </head>
@@ -1197,9 +1233,14 @@ function render(){
   renderIncomeTax();
 }
 function nextInvoiceNo(){
-  const d=new Date(), y=d.getFullYear(), mm=String(d.getMonth()+1).padStart(2,"0"), dd=String(d.getDate()).padStart(2,"0");
-  let max=0; data.invoices.forEach(r=>{const m=String(r["Invoice #"]||"").match(/(\d{3})$/);if(m)max=Math.max(max,+m[1])});
-  return `${y}-${dd}${mm}${String(max+1).padStart(3,"0")}`;
+  const y=new Date().getFullYear();
+  let max=0;
+  data.invoices.forEach(r=>{
+    const raw=String(r["Invoice #"]||"").trim();
+    const yearMatch=raw.match(/(?:INV-)?(\d{4}).*?(\d{3})$/i);
+    if(yearMatch&&Number(yearMatch[1])===y)max=Math.max(max,Number(yearMatch[2]));
+  });
+  return `INV-${y}-${String(max+1).padStart(3,"0")}`;
 }
 function openModal(id){$(id).classList.add("open")} function closeModal(id){$(id).classList.remove("open")}
 function openInvoice(index=null){
@@ -1352,7 +1393,8 @@ async function makeBookkeepingInvoicePdfFile(){
   if(typeof html2canvas!=="function"||!window.jspdf?.jsPDF)throw new Error("PDF libraries are not available. Check your internet connection and reload Bookkeeping.");
   const stage=document.createElement("div");
   stage.setAttribute("aria-hidden","true");
-  stage.style.cssText="position:absolute;left:0;top:-100000px;width:210mm;max-width:210mm;margin:0!important;padding:0!important;border:0!important;background:#fff;z-index:-99999;visibility:visible;pointer-events:none;";
+  stage.className="ros-bk-pdf-stage";
+  stage.style.cssText="position:absolute;left:0;top:-100000px;width:210mm;max-width:210mm;margin:0!important;padding:0!important;border:0!important;background:#fff;color:#142d35!important;font-family:Arial,Helvetica,sans-serif!important;z-index:-99999;visibility:visible;pointer-events:none;";
   const clone=source.cloneNode(true);
   clone.style.cssText="display:block;width:210mm;max-width:210mm;min-width:210mm;margin:0!important;padding:0!important;transform:none!important;box-shadow:none!important;background:#fff!important;";
   const page=clone.querySelector(".ros-invoice-page");
@@ -1944,6 +1986,6 @@ document.querySelectorAll(".tab").forEach(btn=>{
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="./renoweet-drive-core-v3.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="./renoweet-bookkeeping-drive-adapter-v3.2.js"></script>
+<script src="./renoweet-bookkeeping-drive-adapter-v3.5.js"></script>
 </body>
 </html>

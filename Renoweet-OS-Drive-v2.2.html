@@ -208,7 +208,7 @@ hr{border:0;border-top:1px solid var(--line);margin:16px 0}
 .ros-doc-brand{max-width:112mm}.ros-doc-brandline{display:flex;align-items:flex-end;gap:3mm;margin-bottom:1.8mm}.ros-doc-brandline img{width:13mm!important;height:auto!important;display:block!important;margin:0!important;flex:0 0 auto;align-self:flex-end}.ros-doc-brandline h2{font-size:17pt;line-height:.86;margin:0 0 .4mm 0!important;color:#173a43;white-space:nowrap;align-self:flex-end}.ros-doc-brand p{font-size:8.8pt;line-height:1.42;margin:0;color:#334b52}
 .ros-doc-title{text-align:right;min-width:54mm}.ros-doc-title h1{font-size:21pt;line-height:1;margin:0 0 3mm;color:#173a43}.ros-doc-title div{font-size:9.4pt;line-height:1.45;color:#243b42}.ros-doc-title strong{font-weight:800}
 .ros-doc-rule{height:1px;background:#315860;margin:5mm 0 5mm}
-.ros-doc-party{display:grid;grid-template-columns:1fr 1fr;gap:18mm;margin-bottom:6mm}.ros-doc-kicker{font-size:8.4pt;letter-spacing:.08em;text-transform:uppercase;color:#6a7e83}.ros-doc-party strong{font-size:11pt}.ros-doc-party div{font-size:9.6pt;line-height:1.38}
+.ros-doc-party{display:grid;grid-template-columns:1fr 1fr;gap:18mm;margin-bottom:6mm;color:#142d35}.ros-doc-kicker{font-size:8.4pt;letter-spacing:.08em;text-transform:uppercase;color:#6a7e83}.ros-doc-party strong{font-size:11pt}.ros-doc-party div{font-size:9.6pt;line-height:1.38}
 .ros-doc-section-title{font-size:13pt;font-weight:800;color:#173a43;margin:3mm 0 3mm}
 .ros-doc-table{display:table!important;width:100%!important;min-width:0!important;max-width:100%!important;border-collapse:collapse!important;border-spacing:0!important;table-layout:fixed!important;font-size:10pt!important;background:#fff!important;color:#142d35!important;margin:0!important;box-sizing:border-box!important}
 .ros-doc-table col:nth-child(1){width:52%!important}.ros-doc-table col:nth-child(2){width:12%!important}.ros-doc-table col:nth-child(3){width:17%!important}.ros-doc-table col:nth-child(4){width:19%!important}
@@ -1340,7 +1340,7 @@ async function renoweetDocumentPdf(previewSelector,pageSelector,fileName){
 
  const flow=document.createElement('div');
  flow.className='ros-pdf-flow';
- flow.style.cssText='display:block;width:178mm;max-width:178mm;min-width:178mm;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box!important;background:#fff!important;overflow:visible!important;';
+ flow.style.cssText='display:block;width:178mm;max-width:178mm;min-width:178mm;margin:0!important;padding:0!important;border:0!important;box-sizing:border-box!important;background:#fff!important;color:#142d35!important;font-family:Arial,Helvetica,sans-serif!important;overflow:visible!important;';
  const sectionClones=[...sourceClone.querySelectorAll(pageSelector)];
  if(!sectionClones.length)throw new Error('No printable document content found.');
  sectionClones.forEach((pg,idx)=>{
@@ -2141,6 +2141,6 @@ window.addEventListener('beforeunload',e=>{if(formDirty){e.preventDefault();e.re
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="./renoweet-drive-core-v3.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="./renoweet-os-drive-adapter-v3.2.js"></script>
+<script src="./renoweet-os-drive-adapter-v3.5.js"></script>
 </body>
 </html>
