@@ -1778,7 +1778,7 @@ ${existing.customer.name||'Unnamed customer'}
 ${existing.customer.phone||''}
 ${existing.customer.email||''}
 
-Use the existing customer details for this new project?`);if(use)p.customer={...existing.customer,...p.customer,name:existing.customer.name||p.customer.name,phone:existing.customer.phone||p.customer.phone,email:existing.customer.email||p.customer.email,address:p.customer.address||existing.customer.address}}db.projects.unshift(p);draftProject=null;resetProjectShadows()}if(pendingPhotoFiles.length){try{const ok=await savePendingPhotosToFolder(p);if(!ok)alert('Project saved, but selected photos were not stored because the photos folder is not connected.')}catch(e){alert('Project saved, but photos could not be stored: '+(e.message||e))}}p.updated=nowStamp();formDirty=false;scheduleSave();$('projectModal').classList.remove('open');currentProjectId=null;render();toast(isDraft?'Project created':'Saved')}
+Use the existing customer details for this new project?`);if(use)p.customer={...existing.customer,...p.customer,name:existing.customer.name||p.customer.name,phone:existing.customer.phone||p.customer.phone,email:existing.customer.email||p.customer.email,address:p.customer.address||existing.customer.address}}db.projects.unshift(p);draftProject=null;resetProjectShadows()}if(pendingPhotoFiles.length){try{const ok=await savePendingPhotosToFolder(p);if(!ok)alert('Project saved, but selected photos were not stored because the photos folder is not connected.')}catch(e){alert('Project saved, but photos could not be stored: '+(e.message||e))}}p.updated=nowStamp();formDirty=false;scheduleSave();if(window.renoweetDriveOS?.state?.connected){const driveSaved=await window.renoweetDriveOS.save(true);if(!driveSaved){alert('The project is still safe in this browser, but Google Drive did not confirm the save. Keep this page open and use Save now before leaving.');return}}$('projectModal').classList.remove('open');currentProjectId=null;render();toast(isDraft?'Project created':'Saved')}
 function addEstimate(){let p=getP();readEstimate(p);p.estimate.push({id:lineid(),desc:'',qty:1,unit:'uur',rate:62.5});renderTabs()}
 function removeEst(i){let p=getP();readEstimate(p);p.estimate.splice(i,1);renderTabs()}
 function addMaterial(){let p=getP();readMaterials(p);p.materials.push({id:lineid(),desc:'',qty:1,supplier:'',cost:0});renderTabs()}
@@ -2134,7 +2134,7 @@ window.addEventListener('beforeunload',e=>{if(formDirty){e.preventDefault();e.re
 
 <!-- Renoweet Drive storage layer -->
 <script src="https://accounts.google.com/gsi/client"></script>
-<script src="./renoweet-drive-core-v2.6.js"></script>
+<script src="./renoweet-drive-core-v2.7.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="./renoweet-os-drive-adapter-v2.js"></script>
 </body>
