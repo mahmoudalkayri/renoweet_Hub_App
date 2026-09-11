@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <style>
@@ -417,7 +418,7 @@ body.locked header,body.locked main{filter:blur(8px);pointer-events:none;user-se
           <div class="proof-box">
             <div class="actions">
               <button class="secondary" type="button" id="attachProofBtn">Attach PDF / image</button>
-              <button class="secondary" type="button" id="connectProofFolderBtn">Connect proof folder</button>
+              <button class="secondary" type="button" id="connectProofFolderBtn">Proofs: Google Drive</button>
             </div>
             <input id="expProofFile" type="file" accept="image/*,.pdf,application/pdf">
             <input id="expReceipt" type="hidden">
@@ -1224,9 +1225,9 @@ function render(){
   const customers=getCustomers();
   $("customers").innerHTML=`<div class="card panel"><div class="panel-head"><div><h2>Customers</h2><div class="chart-sub">Contact details are kept here instead of widening the invoice register.</div></div><div class="report-actions"><button class="secondary" onclick="printCustomers()">Print</button></div></div>${makeTable(customers,["Customer","Phone","Email","Address","Invoices","Gross","Outstanding"],"readonly")}</div>`;
   const allBusinessExpenses=[...data.expenses,...data.fuel,...data.auto], totalExpGross=sum(allBusinessExpenses,"Gross"), totalExpVat=sum(allBusinessExpenses,"VAT"), totalExpNet=sum(allBusinessExpenses,"Net");
-  $("expenses").innerHTML=`<div class="card panel"><div class="panel-head"><div><h2>All business expenses</h2><div class="chart-sub">General + Fuel + Automobile. Recorded VAT from all three categories is included as deductible input VAT.</div></div><div class="report-actions"><button class="secondary" onclick="connectProofFolder()">Connect proof folder</button><button class="secondary" onclick="printExpenses()">Print all expenses</button><button class="green" onclick="openExpense('General')">+ Add expense</button></div></div>
+  $("expenses").innerHTML=`<div class="card panel"><div class="panel-head"><div><h2>All business expenses</h2><div class="chart-sub">General + Fuel + Automobile. Recorded VAT from all three categories is included as deductible input VAT.</div></div><div class="report-actions"><button class="secondary" onclick="connectProofFolder()">Proofs: Google Drive</button><button class="secondary" onclick="printExpenses()">Print all expenses</button><button class="green" onclick="openExpense('General')">+ Add expense</button></div></div>
   <div class="kpis"><div class="kpi"><div class="kpi-label">Total incl. VAT</div><div class="kpi-value">${euro.format(totalExpGross)}</div></div><div class="kpi"><div class="kpi-label">Deductible input VAT</div><div class="kpi-value">${euro.format(totalExpVat)}</div></div><div class="kpi"><div class="kpi-label">Total ex VAT</div><div class="kpi-value">${euro.format(totalExpNet)}</div></div><div class="kpi"><div class="kpi-label">Breakdown</div><div class="kpi-value" style="font-size:14px">General ${euro.format(sum(data.expenses,"Gross"))}<br>Fuel ${euro.format(sum(data.fuel,"Gross"))}<br>Auto ${euro.format(sum(data.auto,"Gross"))}</div></div></div>
-  <h2 style="margin-top:18px">General expenses</h2><div class="chart-sub">Every new expense requires a PDF/image proof. Fuel and automobile running costs remain separately categorized on Auto & Fuel and for annual tax reporting.</div>${makeTable(data.expenses.map(r=>({...r,"VAT rate":rateLabel(inferVatRate(r,false))})),["Date","Supplier","Category","Description","Gross","VAT rate","VAT","Net","Receipt/File","Proof Check","Review","Notes"],"general")}</div>`;
+  <h2 style="margin-top:18px">General expenses</h2><div class="chart-sub">Every new expense requires a PDF/image proof. New receipt photos are optimized and stored separately in Google Drive so the yearly JSON stays small. Fuel and automobile running costs remain separately categorized on Auto & Fuel and for annual tax reporting.</div>${makeTable(data.expenses.map(r=>({...r,"VAT rate":rateLabel(inferVatRate(r,false))})),["Date","Supplier","Category","Description","Gross","VAT rate","VAT","Net","Receipt/File","Proof Check","Review","Notes"],"general")}</div>`;
   $("autoFuel").innerHTML=`<div class="split">
     <div class="card panel"><div class="panel-head"><h2>Fuel expenses</h2><button class="green" onclick="openExpense('Fuel')">+ Add fuel</button></div>${makeTable(data.fuel.map(r=>({...r,"VAT rate":rateLabel(inferVatRate(r,false))})),["Date","Supplier","Description","Gross","VAT rate","VAT","Net","Receipt/File","Proof Check"],"fuel")}</div>
     <div class="card panel"><div class="panel-head"><h2>Automobile expenses</h2><button class="green" onclick="openExpense('Automobile')">+ Add automobile</button></div>${makeTable(data.auto.map(r=>({...r,"VAT rate":rateLabel(inferVatRate(r,false))})),["Date","Supplier","Description","Gross","VAT rate","VAT","Net","Receipt/File","Proof Check"],"auto")}</div>
@@ -1254,9 +1255,11 @@ function renoweetAllKnownInvoices(){
  return out;
 }
 function renoweetNextInvoiceNumber(dateValue){
- const ds=dateValue||new Date().toISOString().slice(0,10), d=new Date(ds+'T12:00:00'), y=d.getFullYear(), day=String(d.getDate()).padStart(2,'0'), m=String(d.getMonth()+1).padStart(2,'0'), bucket=renoweetInvoiceQuarter(ds);let max=0;
- renoweetAllKnownInvoices().forEach(x=>{const xd=new Date(String(x.date||'')+'T12:00:00');if(isNaN(xd)||xd.getFullYear()!==y||renoweetInvoiceQuarter(x.date)!==bucket)return;const p=renoweetInvoiceSeqFromNo(x.no);if(p&&p.year===y)max=Math.max(max,p.seq)});
- return `${y}-${day}${m}${String(max+1).padStart(3,'0')}`;
+ const ds=dateValue||new Date().toISOString().slice(0,10), d=new Date(ds+'T12:00:00'), y=d.getFullYear(), day=String(d.getDate()).padStart(2,'0'), m=String(d.getMonth()+1).padStart(2,'0'), bucket=renoweetInvoiceQuarter(ds);
+ const used=new Set();
+ renoweetAllKnownInvoices().forEach(x=>{const xd=new Date(String(x.date||'')+'T12:00:00');if(isNaN(xd)||xd.getFullYear()!==y||renoweetInvoiceQuarter(x.date)!==bucket)return;const p=renoweetInvoiceSeqFromNo(x.no);if(p&&p.year===y&&p.seq>0)used.add(p.seq)});
+ let seq=1;while(used.has(seq))seq++;
+ return `${y}-${day}${m}${String(seq).padStart(3,'0')}`;
 }
 
 function nextInvoiceNo(dateValue){return renoweetNextInvoiceNumber(dateValue||document.getElementById('invDate')?.value||new Date().toISOString().slice(0,10))}
@@ -1554,7 +1557,10 @@ $("saveExpenseBtn").onclick=async()=>{
   if(!ensurePeriodEditable("save an expense"))return;
   const previousProofCheck=(editingExpense.index!==null?(editingExpense.type==="Fuel"?data.fuel:editingExpense.type==="Automobile"?data.auto:data.expenses)[editingExpense.index]?.["Proof Check"]:"")||"";
   const proofCheck=proofExtracted?((!proofExtracted.gross||Math.abs(n(proofExtracted.gross)-gross)<=0.03)&&(!proofExtracted.vat||Math.abs(n(proofExtracted.vat)-vat)<=0.03)?"Match":"Mismatch"):(previousProofCheck|| (existingProof?"Not checked":"Missing"));
-  let r={Date:excelSerial($("expDate").value),Supplier:$("expSupplier").value.trim(),Description:$("expDescription").value.trim(),Gross:gross,VAT:vat,"VAT rate":$("expVatRate").value==="custom"?"Other":$("expVatRate").value,Net:gross-vat,"Receipt/File":proofName,"Proof Check":proofCheck};
+  const prevRow=editingExpense.index!==null?(editingExpense.type==="Fuel"?data.fuel:editingExpense.type==="Automobile"?data.auto:data.expenses)[editingExpense.index]:null;
+  const proofMeta=window.__renoweetProofUploadMeta||null;
+  let r={Date:excelSerial($("expDate").value),Supplier:$("expSupplier").value.trim(),Description:$("expDescription").value.trim(),Gross:gross,VAT:vat,"VAT rate":$("expVatRate").value==="custom"?"Other":$("expVatRate").value,Net:gross-vat,"Receipt/File":proofName,"Proof Check":proofCheck,
+    "Proof Drive ID":proofMeta?.id||prevRow?.["Proof Drive ID"]||"","Proof MIME":proofMeta?.mimeType||prevRow?.["Proof MIME"]||"","Proof bytes":proofMeta?.size||prevRow?.["Proof bytes"]||"","Proof original bytes":proofMeta?.originalSize||prevRow?.["Proof original bytes"]||""};
   let arr;
   if(gross<=0){alert("Gross amount must be greater than €0.");$("expGross").focus();return}
   if(n(r.VAT)<0 || n(r.VAT)>gross){alert("VAT amount must be between €0 and the gross amount.");return}
@@ -1564,7 +1570,7 @@ $("saveExpenseBtn").onclick=async()=>{
   const duplicate=expenseDuplicate(r,type,editingExpense.type===type?editingExpense.index:null);
   if(duplicate&&!confirm(`Possible duplicate expense detected.\n\n${r.Supplier} • ${fmtDate(r.Date)} • ${euro.format(r.Gross)}\n\nA similar ${duplicate._type.toLowerCase()} expense already exists. Save anyway?`))return;
   if(editingExpense.index===null||editingExpense.type!==type) arr.push(r); else arr[editingExpense.index]=r;
-  pendingProofFile=null;proofExtracted=null;
+  pendingProofFile=null;proofExtracted=null;window.__renoweetProofUploadMeta=null;
   persist();render();closeModal("expenseModal");
 };
 window.editRow=(type,index)=>{if(type==="invoice")openInvoice(index);else if(type==="fuel")openExpense("Fuel",index);else if(type==="auto")openExpense("Automobile",index);else openExpense("General",index)};
@@ -1648,8 +1654,13 @@ function restoreDeletedBookkeeping(index){
  else if(type.includes('fuel'))arr=data.fuel;
  else if(type.includes('automobile'))arr=data.auto;
  else arr=data.expenses;
- if(type==='invoice'&&arr.some(x=>String(x['Invoice #']||'').trim()===String(r['Invoice #']||'').trim())){alert('That invoice number already exists. Renoweet will not create a duplicate.');return}
- if(!confirm(`Restore ${row.Type||'record'} ${row['Record ID']||''}?\n\nIt will return to the bookkeeping calculations for its original date.`))return;
+ if(type==='invoice'){
+   const oldNo=String(r['Invoice #']||'').trim();
+   const proposed=renoweetNextInvoiceNumber(isoDate(r.Date)||new Date().toISOString().slice(0,10));
+   r['Invoice #']=proposed;
+   if(oldNo&&oldNo!==proposed)r.Notes=((r.Notes||'')+` • Restored from Deleted; previous invoice number ${oldNo}.`).trim();
+ }
+ if(!confirm(`Restore ${row.Type||'record'} ${row['Record ID']||''}?\n\nIt will return to the bookkeeping calculations for its original date.${type==='invoice'?`\nInvoice number on restore: ${r['Invoice #']}`:''}`))return;
  arr.push(r);data.deleted.splice(index,1);persist();alert('Bookkeeping record restored.');
 }
 function permanentlyDeleteBookkeeping(index){
@@ -1663,7 +1674,7 @@ function permanentlyDeleteBookkeeping(index){
 
 function aoaFromData(){
   const invHeaders=["Invoice #","Date","Customer","Address","Work description","Contact","Phone","Email","Gross incl. VAT","Parking","Other costs","VAT","VAT rate","Net revenue","Status","Due date","Paid date","Days overdue","Notes","Source database"];
-  const expHeaders=["Date","Supplier","Category","Description","Gross","VAT","VAT rate","Net","Receipt/File","Proof Check","Review","Notes"];
+  const expHeaders=["Date","Supplier","Category","Description","Gross","VAT","VAT rate","Net","Receipt/File","Proof Drive ID","Proof MIME","Proof bytes","Proof original bytes","Proof Check","Review","Notes"];
   return {invHeaders,expHeaders};
 }
 function replaceDataSheets(){
@@ -2040,5 +2051,6 @@ document.querySelectorAll(".tab").forEach(btn=>{
 <script src="./renoweet-drive-core-v3.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="./renoweet-bookkeeping-drive-adapter-v3.7.js"></script>
+<script src="./renoweet-bookkeeping-enhancements-v4.3.js"></script>
 </body>
 </html>
