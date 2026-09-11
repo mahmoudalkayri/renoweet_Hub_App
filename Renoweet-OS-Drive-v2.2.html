@@ -1166,8 +1166,7 @@ async function restoreDeletedProject(index){
  if((db.projects||[]).some(x=>x.id===p.id)){alert('A project with this Project ID already exists. Renoweet will not create a duplicate.');return}
  if(!confirm(`Restore project "${p.title||row.Title||p.id}"?\n\nThe project and its internal project information will return to OS. Cancelled calendar events and client cancellation messages will NOT be recreated automatically.`))return;
  p.schedule=p.schedule||{};p.schedule.calendarEventId='';p.schedule.calendarSharedWith='';p.schedule.calendarShareSignature='';p.schedule.inviteStatus='';
- p.invoice=p.invoice||{};const previousInvoiceNo=p.invoice.number||row['Invoice number']||'';p.invoice.number='';p.invoice.status='Draft';delete p.invoice.bookkeepingQueuedAt;delete p.invoice.bookkeepingStatus;
- p.updated=nowStamp();p.activity=Array.isArray(p.activity)?p.activity:[];p.activity.push({id:lineid(),date:today(),text:`Project restored from Deleted. Calendar/client cancellation was not reversed automatically.${previousInvoiceNo?' Previous invoice '+previousInvoiceNo+' stays cancelled; a fresh available number will be assigned when the invoice is sent again.':''}`});
+ p.updated=nowStamp();p.activity=Array.isArray(p.activity)?p.activity:[];p.activity.push({id:lineid(),date:today(),text:'Project restored from Deleted. Calendar/client cancellation was not reversed automatically.'});
  db.projects.push(p);db.deleted.splice(index,1);render();scheduleSave();toast('Project restored');
 }
 async function permanentlyDeleteProject(index){
@@ -1544,18 +1543,19 @@ async function sendQuoteByWhatsApp(){try{const p=getP();saveProjectFromForm(fals
 function invoiceHTML(p){
  if(!p.invoice)p.invoice={};
  if(!p.invoice.date)p.invoice.date=today();
+ if(!p.invoice.number)p.invoice.number=nextInvoice(p.invoice.date);
  if(!p.invoice.dueDays||+p.invoice.dueDays===14)p.invoice.dueDays=3;
  const t=projectTotals(p),net=t.taxableSubtotal,vat=t.vat,grand=t.total;
  const due=new Date((p.invoice.date||today())+'T12:00:00');due.setDate(due.getDate()+(+p.invoice.dueDays||3));const dueDate=due.toISOString().slice(0,10);
  const logoSrc=document.querySelector('.pin-logo')?.src||'';
  const rows=(p.estimate||[]).map(x=>`<tr><td class="d">${esc(x.desc||'')}</td><td class="q">${(+x.qty||0)} ${esc(x.unit||'')}</td><td class="r">${money(+x.rate||0)}</td><td class="a">${money((+x.qty||0)*(+x.rate||0))}</td></tr>`).join('');
- return `<div class="card no-print" style="margin-bottom:12px"><div class="formgrid"><div class="field"><label>Factuurnummer</label><input id="inv_number" value="${esc(p.invoice.number||'')}" placeholder="Assigned when sent / printed"></div><div class="field"><label>Factuurdatum</label><input id="inv_date" type="date" value="${p.invoice.date}"></div><div class="field"><label>Betalingstermijn (dagen)</label><input id="inv_due" type="number" min="1" value="${+p.invoice.dueDays||3}"></div></div><div class="small" style="margin-top:8px">Standaard betalingstermijn: 3 dagen na factuurdatum.</div></div>
+ return `<div class="card no-print" style="margin-bottom:12px"><div class="formgrid"><div class="field"><label>Factuurnummer</label><input id="inv_number" value="${esc(p.invoice.number)}"></div><div class="field"><label>Factuurdatum</label><input id="inv_date" type="date" value="${p.invoice.date}"></div><div class="field"><label>Betalingstermijn (dagen)</label><input id="inv_due" type="number" min="1" value="${+p.invoice.dueDays||3}"></div></div><div class="small" style="margin-top:8px">Standaard betalingstermijn: 3 dagen na factuurdatum.</div></div>
  <div class="ros-invoice-preview">
   <section class="ros-invoice-page">
    <div class="ros-invoice-content">
     <div class="ros-doc-header">
       <div class="ros-doc-brand"><div class="ros-doc-brandline">${logoSrc?`<img src="${logoSrc}" alt="Renoweet">`:''}<h2>Renoweet</h2></div><p>Renovatie • Timmerwerk • Technische oplossingen<br>Hiridostraat 2c65, 1101 CW Amsterdam<br>KVK 97746312 • BTW NL005285311B07<br>06 43865003 • renoweet@hotmail.com<br><b>www.renoweet.nl</b></p></div>
-      <div class="ros-doc-title"><h1>FACTUUR</h1><div><strong>Factuurnr.</strong> ${esc(p.invoice.number||'DRAFT')}<br><strong>Datum</strong> ${fmtDate(p.invoice.date)}<br><strong>Vervaldatum</strong> ${fmtDate(dueDate)}</div></div>
+      <div class="ros-doc-title"><h1>FACTUUR</h1><div><strong>Factuurnr.</strong> ${esc(p.invoice.number)}<br><strong>Datum</strong> ${fmtDate(p.invoice.date)}<br><strong>Vervaldatum</strong> ${fmtDate(dueDate)}</div></div>
     </div>
     <div class="ros-doc-rule"></div>
     <div class="ros-doc-party">
@@ -1570,16 +1570,16 @@ function invoiceHTML(p){
       ${t.parking?`<div class="ros-doc-summary-row"><span class="label">Parkeerkosten</span><strong>${money(t.parking)}</strong></div>`:''}
       <div class="ros-doc-summary-row grand"><span class="label">Totaal</span><strong>${money(grand)}</strong></div>
     </div>
-    <div class="ros-invoice-terms"><p><b>Betaling</b></p><p>Betaling binnen <b>${+p.invoice.dueDays||3} dagen</b> na factuurdatum op <b>NL45INGB0111929547</b> onder vermelding van factuurnummer ${esc(p.invoice.number||'DRAFT')}.</p><p>Bij niet-tijdige betaling is Renoweet gerechtigd wettelijke rente en incassokosten in rekening te brengen.</p><p>Op alle werkzaamheden en leveringen van Renoweet zijn de Algemene Voorwaarden van Renoweet van toepassing. Zie ook <b>www.renoweet.nl</b>.</p></div>
+    <div class="ros-invoice-terms"><p><b>Betaling</b></p><p>Betaling binnen <b>${+p.invoice.dueDays||3} dagen</b> na factuurdatum op <b>NL45INGB0111929547</b> onder vermelding van factuurnummer ${esc(p.invoice.number)}.</p><p>Bij niet-tijdige betaling is Renoweet gerechtigd wettelijke rente en incassokosten in rekening te brengen.</p><p>Op alle werkzaamheden en leveringen van Renoweet zijn de Algemene Voorwaarden van Renoweet van toepassing. Zie ook <b>www.renoweet.nl</b>.</p></div>
    </div>
-   <div class="ros-invoice-footer"><span>Renoweet • Slim en Duurzaam. Voor elke klus.</span><span>Factuur ${esc(p.invoice.number||'DRAFT')}</span></div>
+   <div class="ros-invoice-footer"><span>Renoweet • Slim en Duurzaam. Voor elke klus.</span><span>Factuur ${esc(p.invoice.number)}</span></div>
   </section>
  </div>
  <div class="actions no-print" style="margin-top:12px"><button class="btn primary" onclick="markInvoiceSent()">Mark sent</button><button class="btn" onclick="printInvoiceClean()">Print / PDF</button><button class="btn primary" onclick="smartSendInvoice()">Send invoice</button><button class="btn" onclick="sendToBookkeeping()">Send to bookkeeping</button></div>`;
 }
 
 async function printInvoiceClean(){
- try{const p=getP();if(!p)return;saveProjectFromForm(false);if(!p.invoice.date)p.invoice.date=today();if(!p.invoice.number)p.invoice.number=nextInvoice(p.invoice.date);renderTabs();scheduleSave();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));const file=await makeRenoweetInvoicePdfFile();downloadInvoiceFile(file);toast('Invoice PDF downloaded. Open the PDF to print.');}catch(e){console.error(e);alert('Could not create the invoice PDF: '+(e?.message||e));}
+ try{const p=getP();if(!p)return;saveProjectFromForm(false);renderTabs();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));const file=await makeRenoweetInvoicePdfFile();downloadInvoiceFile(file);toast('Invoice PDF downloaded. Open the PDF to print.');}catch(e){console.error(e);alert('Could not create the invoice PDF: '+(e?.message||e));}
 }
 
 async function makeRenoweetInvoicePdfFile(){
@@ -1626,6 +1626,7 @@ function smartSendInvoice(){
 
  saveProjectFromForm(false);
  if(!p.invoice.date)p.invoice.date=today();
+ if(!p.invoice.number)p.invoice.number=nextInvoice(p.invoice.date);
 
  const email=(p.customer.email||"").trim();
  const phone=(p.customer.phone||"").trim();
@@ -1823,19 +1824,15 @@ function renoweetInvoiceSeqFromNo(no){
 }
 function renoweetAllKnownInvoices(){
  const out=[];
- const cancelled=new Set();
- try{(db.bookkeeping||[]).forEach(r=>{if(String(r?.Status||'').toLowerCase()==='cancelled in os'&&r?.['Invoice number'])cancelled.add(String(r['Invoice number']))})}catch(e){}
  try{(db.projects||[]).forEach(p=>{if(p?.invoice?.number)out.push({no:p.invoice.number,date:p.invoice.date})})}catch(e){}
  try{(data.invoices||[]).forEach(r=>{if(r?.['Invoice #'])out.push({no:r['Invoice #'],date:r.Date})})}catch(e){}
- try{const c=window.__renoweetCanonical||{};(c.os?.projects||[]).forEach(p=>{if(p?.invoice?.number)out.push({no:p.invoice.number,date:p.invoice.date})});(c.bookkeeping?.invoices||[]).forEach(r=>{const no=String(r?.['Invoice #']||'');if(no&&!cancelled.has(no))out.push({no,date:r.Date})})}catch(e){}
+ try{const c=window.__renoweetCanonical||{};(c.os?.projects||[]).forEach(p=>{if(p?.invoice?.number)out.push({no:p.invoice.number,date:p.invoice.date})});(c.bookkeeping?.invoices||[]).forEach(r=>{if(r?.['Invoice #'])out.push({no:r['Invoice #'],date:r.Date})})}catch(e){}
  return out;
 }
 function renoweetNextInvoiceNumber(dateValue){
- const ds=dateValue||new Date().toISOString().slice(0,10), d=new Date(ds+'T12:00:00'), y=d.getFullYear(), day=String(d.getDate()).padStart(2,'0'), m=String(d.getMonth()+1).padStart(2,'0'), bucket=renoweetInvoiceQuarter(ds);
- const used=new Set();
- renoweetAllKnownInvoices().forEach(x=>{const xd=new Date(String(x.date||'')+'T12:00:00');if(isNaN(xd)||xd.getFullYear()!==y||renoweetInvoiceQuarter(x.date)!==bucket)return;const p=renoweetInvoiceSeqFromNo(x.no);if(p&&p.year===y&&p.seq>0)used.add(p.seq)});
- let seq=1;while(used.has(seq))seq++;
- return `${y}-${day}${m}${String(seq).padStart(3,'0')}`;
+ const ds=dateValue||new Date().toISOString().slice(0,10), d=new Date(ds+'T12:00:00'), y=d.getFullYear(), day=String(d.getDate()).padStart(2,'0'), m=String(d.getMonth()+1).padStart(2,'0'), bucket=renoweetInvoiceQuarter(ds);let max=0;
+ renoweetAllKnownInvoices().forEach(x=>{const xd=new Date(String(x.date||'')+'T12:00:00');if(isNaN(xd)||xd.getFullYear()!==y||renoweetInvoiceQuarter(x.date)!==bucket)return;const p=renoweetInvoiceSeqFromNo(x.no);if(p&&p.year===y)max=Math.max(max,p.seq)});
+ return `${y}-${day}${m}${String(max+1).padStart(3,'0')}`;
 }
 
 function nextInvoice(dateValue){return renoweetNextInvoiceNumber(dateValue||getP()?.invoice?.date||today())}
@@ -1879,12 +1876,6 @@ The project will be moved to the Deleted sheet, not permanently erased. If it ha
 Continue?`))return;
  const row=deletedProjectRow(p);
  if(p.schedule?.calendarEventId&&googleAccessToken){try{await calendarFetch(eventPathWithUpdates(`/calendars/${encodeURIComponent(GOOGLE_CALENDAR_ID)}/events/${encodeURIComponent(p.schedule.calendarEventId)}`,p.schedule.calendarSharedWith?'all':'none'),{method:'DELETE'});row['Calendar Deletion Pending']=false;row['Calendar Deleted At']=new Date().toISOString()}catch(e){row['Calendar Deletion Pending']=true}}
- if(p.invoice?.number){
-   const cancelledAt=new Date().toISOString(),oldNo=p.invoice.number;
-   if(!db.bookkeeping)db.bookkeeping=[];
-   const cancelRow={"Invoice number":oldNo,"Invoice date":p.invoice.date||today(),"Customer":p.customer?.name||'',"Project":p.title||'',"Project ID":p.id||'',"Status":"Cancelled in OS","Cancelled at":cancelledAt,"Queue token":`cancel-${p.id||''}-${cancelledAt}`,"Source database":activeDbName||fileHandle?.name||''};
-   const qi=db.bookkeeping.findIndex(x=>String(x['Invoice number']||'')===String(oldNo));if(qi>=0)db.bookkeeping[qi]=cancelRow;else db.bookkeeping.push(cancelRow);
- }
  db.deleted.push(row);db.projects=db.projects.filter(x=>x.id!==p.id);currentProjectId=null;$('projectModal').classList.remove('open');scheduleSave();render();toast('Project moved to Deleted');
  if(row['Calendar Deletion Pending'])alert('Project deleted. Calendar cancellation is queued for the next Google Calendar connection.');
 }
@@ -2099,6 +2090,7 @@ function sendToBookkeeping(){
  saveProjectFromForm(false);
  let p=getP(); // re-read after form save so the queued row uses the latest project state
  if(!p.invoice.date)p.invoice.date=today();
+ if(!p.invoice.number)p.invoice.number=nextInvoice(p.invoice.date);
  const queuedAt=new Date().toISOString();
  p.invoice.bookkeepingQueuedAt=queuedAt;
  p.invoice.bookkeepingStatus="Queued";
@@ -2139,7 +2131,7 @@ function sendToBookkeeping(){
  };
 
  if(!db.bookkeeping)db.bookkeeping=[];
- let i=db.bookkeeping.findIndex(x=>(x["Invoice number"]||"")===row["Invoice number"]&&String(x.Status||'').toLowerCase()!=='cancelled in os');
+ let i=db.bookkeeping.findIndex(x=>(x["Invoice number"]||"")===row["Invoice number"]);
  if(i>=0)db.bookkeeping[i]=row; else db.bookkeeping.push(row);
 
  p.invoice.status="Sent";
@@ -2203,6 +2195,5 @@ window.addEventListener('beforeunload',e=>{if(formDirty){e.preventDefault();e.re
 <script src="./renoweet-drive-core-v3.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="./renoweet-os-drive-adapter-v3.6.js"></script>
-<script src="./renoweet-os-enhancements-v4.2.js"></script>
 </body>
 </html>
