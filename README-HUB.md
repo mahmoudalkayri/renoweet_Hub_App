@@ -16,3 +16,6 @@ This package contains the Focus Hub, Renoweet OS, Bookkeeping and BOD. Google Dr
 
 ## v3.3
 BOD now has first-class YTD, quarter, full-year and 3-year comparison controls with period-aware metrics and report output.
+
+## v4.2
+Compact Google Drive receipt-proof storage, merged proof PDF export, and gap-reusing quarterly invoice numbering.
